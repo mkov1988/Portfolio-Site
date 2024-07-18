@@ -1353,4 +1353,5 @@ select:-webkit-autofill:focus {
 
 input[type=radio] {
    -webkit-appearance: none;
+   appearance: radio; 
 }
