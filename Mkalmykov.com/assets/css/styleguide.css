@@ -695,7 +695,7 @@ video.overlay {
     transform: translateX(-3.7em) rotate(0.001deg);
 }
 
-.btn-link.btn-left-top .dennis {
+.btn-link.btn-left-top .michael {
     transform: translateX(0) rotate(0.001deg);
     position: relative;
     display: inline-block;
@@ -704,7 +704,7 @@ video.overlay {
     transition: var(--animation-primary);
 }
 
-.btn-link.btn-left-top:hover .dennis {
+.btn-link.btn-left-top:hover .michael {
     padding-right: 2em;
     transform: translateX(-3.7em) rotate(0.001deg);
 }
@@ -729,7 +729,7 @@ video.overlay {
         transform: translateX(0) rotate(0.001deg);
     }
     
-    .btn-link.btn-left-top:hover .dennis {
+    .btn-link.btn-left-top:hover .michael {
         padding-right: .2em;
         transform: translateX(0) rotate(0.001deg);
     }
