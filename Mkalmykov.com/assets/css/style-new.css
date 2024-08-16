@@ -1625,6 +1625,306 @@ main.touch .main-wrap {
    }
 }
 
+/* ------------------------- Work Page - Common -------------------------------------------------- */
+.work-h2 {
+   font-size: 64px;
+   text-transform: uppercase;
+   margin-bottom: auto;
+}
+
+.work-h3{
+   font-size: 32px;
+   margin-bottom: 12px;
+}
+
+.work-h4{
+   font-size: 24px;
+   line-height: 44px;
+   margin-bottom: auto;
+}
+
+.work-p {
+   font-size: 14px;
+   line-height: 24px;
+   margin-bottom: 24px;
+}
+
+.work-mb-xl {
+   margin-bottom: 64px;
+}
+
+.work-mb-xxl {
+   margin-bottom: 100px;
+}
+
+.work-pt-xxl {
+   padding-top: 200px;
+}
+
+.work-pb-l {
+   padding-bottom: 100px;
+}
+
+.work-pt-l {
+   padding-top: 100px;
+}
+
+.work-pb-xl {
+   padding-bottom: 128px;
+}
+
+.work-pt-xl {
+   padding-top: 128px;
+}
+
+.work-pt-none {
+   padding-top: 0;
+}
+
+.work-pb-none {
+   padding-bottom: 0;
+}
+
+.pos-rel {
+   position: relative;
+}
+
+.disp-block {
+   display: block;
+}
+
+.text-center {
+   text-align: center;
+}
+
+.v-features-wrap .wrap {
+   padding: 54px 50px;
+   background-color: var(--color-white);
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   color: black;
+   gap: 25px;
+}
+
+.v-features-wrap .wrap:not(:last-child) {
+   margin-bottom: 32px;
+}
+
+.v-features-wrap .content-wrap {
+   width: 82%;
+}
+
+.v-features-wrap .icon-wrap {
+   flex: 1;
+}
+
+.v-features-wrap img {
+   margin: 0 auto;
+   display: block;
+   max-width: 100%;
+}
+
+.v-features-wrap .work-h4{
+   margin-bottom: 10px;
+}
+
+.h-features-wrap{
+   display: flex;
+   border: 1px solid #E0D9D1;
+   box-shadow: 0px 4px 11px 0px #0000001C;
+   padding: 24px 32px;
+   background-color: var(--color-white);
+}
+
+.h-features-wrap .wrap {
+   flex: 1;
+}
+
+.h-features-wrap .wrap:not(:first-child) {
+   padding-left: 50px;
+}
+
+.h-features-wrap .wrap:not(:last-child) {
+   padding-right: 50px;
+}
+
+.h-features-wrap .wrap:nth-child(2)::before, .h-features-wrap .wrap:nth-child(2)::after {
+   content: '';
+   display: block;
+   position: absolute;
+   width: 2px;
+   height: 100%;
+   top: 50%;
+   transform: translateY(-50%);
+   background-color: #E0D9D1;
+}
+
+.h-features-wrap .wrap:nth-child(2)::before{
+   left: 0;
+}
+
+.h-features-wrap .wrap:nth-child(2)::after{
+   right: 0;
+}
+
+/* ------------------------- Work Page - Deveron -------------------------------------------------- */
+.img-deveron-1 {
+   margin-bottom: 170px;
+}
+
+.deveron-as {
+   width: 100%;
+   aspect-ratio: 4 / 3;
+   background-image: url(../img/work/deveron/background-2.jpg);
+   background-repeat: no-repeat;
+   background-size: cover;
+   position: relative;
+   overflow: hidden;
+}
+
+.deveron-as .main-img {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 60%;
+   transform: translate(-50%, -50%) rotate(0deg);
+   transition: all 1s ease-in-out;
+   z-index: 1;
+}
+
+.deveron-as .main-img.is-inview {
+   transform: translate(-50%, -50%) rotate(22deg);
+}
+
+.deveron-as .main-img img {
+   border-radius: 16px;
+   box-shadow: 0px 3px 22px 0px #1C1B7638;
+}
+
+.deveron-as .back-img {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 80%;
+   transform: translate(-50%, -50%) rotate(22deg);
+   aspect-ratio: 7 / 5;
+}
+
+.deveron-as .back-img img {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   aspect-ratio: 7 / 5;
+   object-fit: cover;
+   object-position: left top;
+   width: 32%;
+   border-radius: 8px;
+   transition: 1s all ease-in-out;
+}
+
+.deveron-as .back-img.is-inview img:nth-child(1) {
+   left: -2%;
+   top: -5%;
+   transform: translate(0, 0);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(2) {
+   top: -5%;
+   left: 50%;
+   transform: translate(-50%, 0);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(3) {
+   top: -5%;
+   left: 102%;
+   transform: translate(-100%, 0);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(4) {
+   top: 50%;
+   left: 0;
+   transform: translate(-45%, -50%);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(5) {
+   top: 50%;
+   left: 100%;
+   transform: translate(-55%, -50%);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(6) {
+   top: 105%;
+   left: -2%;
+   transform: translate(0, -100%);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(7) {
+   top: 105%;
+   left: 50%;
+   transform: translate(-50%, -100%);
+}
+
+.deveron-as .back-img.is-inview img:nth-child(8) {
+   top: 105%;
+   left: 102%;
+   transform: translate(-100%, -100%);
+}
+
+.bg-deveron {
+   background-image: url(../img/work/deveron/background.jpg);
+   background-repeat: no-repeat;
+   background-size: cover;
+   color: var(--color-white);
+   padding-top: 190px;
+   padding-bottom: 190px;
+}
+
+.final-block-deveron {
+   padding-top: 230px;
+   padding-bottom: 175px;
+   background-color: #434B4F;
+   margin-top: -100px;
+   position: relative;
+   z-index: -1;
+}
+
+.final-block-deveron img{
+   width: 100%;
+}
+
+.work-goals-wrap {
+   aspect-ratio: 16 / 9;
+   width: 100%;
+}
+
+.work-goals-wrap img {
+   position: absolute;
+   width: 60%;
+   box-shadow: -11px -11px 11px 0px #FFFFFF1C;
+}
+
+.work-goals-wrap img:nth-child(1) {
+   top: 0;
+   left: 0;
+}
+.work-goals-wrap img:nth-child(2) {
+   top: 10%;
+   left: 10%;
+}
+.work-goals-wrap img:nth-child(3) {
+   top: 20%;
+   left: 20%;
+}
+.work-goals-wrap img:nth-child(4) {
+   top: 30%;
+   left: 30%;
+}
+.work-goals-wrap img:nth-child(5) {
+   top: 40%;
+   left: 40%;
+}
 
 /* ------------------------- Mouse Position Image -------------------------------------------------- */
 
