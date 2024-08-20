@@ -1413,3 +1413,91 @@ function initScrolltriggerAnimations() {
   }); // End GSAP Matchmedia
 
 }
+
+/**
+ * Stack Slider
+ */
+$(document).ready(function () {
+  let timer = 0;
+  var $offset = 10;
+  $(".work-goals-wrap").each(function () {
+    var $this = $(this);
+    var $images = $("img", $this);
+    var $count = $images.length;
+    $this.on("click", function () {
+      if ($this.hasClass("animated")) {
+        return;
+      }
+      $this.trigger("clone");
+      timer = 0;
+    });
+    $this.on("stack", function () {
+      $images.css({
+        width: "60%",
+      });
+      $images.trigger("orderStack");
+    }).on("clone", function () {
+      $this.addClass("animated");
+      var $last = $("img:last-child", $this);
+      $last.clone().css({
+        top: "-1" * $offset + "%",
+        left: "-1" * $offset + "%",
+        opacity: 0,
+        zIndex: 0,
+        transform: "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
+      }).prependTo($this);
+      $this.trigger("animateStack");
+    }).on("animateStack", function () {
+      var $first = $("img:first-child", $this);
+      var $last = $("img:last-child", $this);
+      var $all = $("img", $this);
+      var $others = $all.not($first).not($last);
+      $last.animate({
+        top: "+=" + 3 * $offset + "%",
+        left: "+=" + 3 * $offset + "%",
+        opacity: 0,
+        transform: "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 92.2266, 0, 1)"
+      }, {
+        duration: 1000,
+        complete: function () {
+          $last.detach();
+          $this.delay(1000).removeClass("animated");
+        }
+      });
+      $first.animate({
+        top: 0,
+        left: 0,
+        opacity: 1,
+      }, {
+        duration: 1000
+      });
+      $others.animate({
+        top: "+=" + $offset + "%",
+        left: "+=" + $offset + "%"
+      }, {
+        duration: 1000
+      });
+      $all.each(function(ind, el) {
+        let currentSpeed = $(el).attr('data-scroll-speed');
+        let newSpeed = parseInt(currentSpeed) !== 5 ? parseInt(currentSpeed) + 1 : 1;
+        $(el).attr('data-scroll-speed', newSpeed);
+      });
+    });
+    $images.on("orderStack", function () {
+      var $this = $(this);
+      var $index = $(".work-goals").index($this);
+      $this.animate({
+        top: $offset * $index + "%",
+        left: $offset * $index + "%",
+        zIndex: ($index + 1) * 100
+      }, 500);
+    });
+    $this.trigger("stack");
+    setInterval(() => {
+      if (timer > 3 && $this.hasClass("is-inview")) {
+        $this.trigger("click");
+      }
+      timer += 1;
+    }, 1000)
+  });
+});
