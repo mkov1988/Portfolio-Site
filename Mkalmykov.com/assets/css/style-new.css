@@ -1804,6 +1804,140 @@ main.touch .main-wrap {
    list-style: outside decimal;
 }
 
+.device-frame-section .btn-wrap.theme-dark {
+   right: -10%;
+}
+
+.v-features-wrap .mobile-icon {
+   display: none;
+}
+
+@media screen and (max-width: 1024px) {
+   .h-features-wrap {
+      flex-direction: column;
+   }
+
+   .h-features-wrap .wrap:not(:last-child) {
+      padding-bottom: 25px;
+      padding-right: 0;
+   }
+
+   .h-features-wrap .wrap:not(:first-child) {
+      padding-top: 25px;
+      padding-left: 0;
+   }
+
+   .h-features-wrap .wrap:nth-child(2) {
+      padding: 25px 0;
+   }
+
+   .h-features-wrap .wrap:nth-child(2)::before, .h-features-wrap .wrap:nth-child(2)::after {
+      width: 100%;
+      height: 2px;
+   }
+
+   .h-features-wrap .wrap:nth-child(2)::before {
+      top: 0;
+   }
+
+   .h-features-wrap .wrap:nth-child(2)::after {
+      top: 100%;
+   }
+
+   .v-features-wrap .wrap {
+      padding: 25px 28px;
+   }
+}
+
+@media screen and (max-width: 768px) {
+   .work-bg-cards {
+      padding-top: 80px;
+      padding-bottom: 80px;
+   }
+
+   .work-mb-xl {
+      margin-bottom: 32px;
+   }
+
+   .work-mb-xxl {
+      margin-bottom: 50px;
+   }
+
+   .work-h2 {
+      font-size: 54px;
+   }
+
+   .work-h3 {
+      font-size: 26px;
+   }
+
+   .work-pt-xxl {
+      padding-top: 100px;
+   }
+
+   .work-pt-xl {
+      padding-top: 64px;
+   }
+
+   .work-pt-l {
+      padding-top: 50px;
+   }
+
+   .work-pb-l {
+      padding-bottom: 50px;
+   }
+
+   .work-pb-xl {
+      padding-bottom: 64px;
+   }
+
+   .img-deveron-1 {
+      margin-bottom: 85px !important;
+   }
+}
+
+@media screen and (max-width: 640px) {
+   .device-frame-section .btn-wrap.theme-dark {
+      top: 20%;
+   }
+
+   .work-h2 {
+      font-size: 46px;
+   }
+
+   .v-features-wrap .content-wrap {
+      width: 100%;
+   }
+
+   .v-features-wrap .icon-wrap {
+      display: none;
+   }
+
+   .v-features-wrap .mobile-icon {
+      display: block;
+      margin: 0;
+      width: 15%;
+   }
+
+   .v-features-wrap .title-icon-wrap {
+      display: flex;
+      gap: 25px;
+      margin-bottom: 20px;
+      align-items: center;
+   }
+
+   .v-features-wrap .title {
+      width: 82%;
+      line-height: 32px;
+      margin-bottom: 0;
+   }
+
+   :is(.cox,.deveron).device-frame-section .btn-wrap {
+      top: -20%;
+      right: -20%;
+   }
+}
+
 /* ------------------------- Work Page - Deveron -------------------------------------------------- */
 .img-deveron-1 {
    margin-bottom: 170px;
@@ -1969,7 +2103,7 @@ main.touch .main-wrap {
    position: absolute;
    left: 50%;
    top: 50%;
-   width: 40%;
+   width: 42%;
    transform: translate(-50%, -50%);
    transition: all 1s ease-in-out;
    z-index: 1;
@@ -1999,16 +2133,16 @@ main.touch .main-wrap {
    left: 50%;
    transform: translate(-50%, -200%);
    transition: all 1s ease-in-out;
-   width: 20%;
+   width: 22%;
 }
 
 .cox-as .back-img .col-2 {
    position: absolute;
    top: 50%;
-   left: 28%;
+   left: 26%;
    transform: translate(-50%, 200%);
    transition: all 1s ease-in-out;
-   width: 20%;
+   width: 22%;
 }
 
 .cox-as .back-img.is-inview .col-1 {
