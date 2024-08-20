@@ -1657,6 +1657,10 @@ main.touch .main-wrap {
    margin-bottom: 100px;
 }
 
+.work-mb-0 {
+   margin-bottom: 0;
+}
+
 .work-pt-xxl {
    padding-top: 200px;
 }
@@ -1768,19 +1772,45 @@ main.touch .main-wrap {
    right: 0;
 }
 
+.work-bg-cards {
+   background-repeat: no-repeat;
+   background-size: cover;
+   color: var(--color-white);
+   padding-top: 190px;
+   padding-bottom: 190px;
+}
+
+.overflow-h {
+   overflow: hidden;
+}
+
+.animated-section {
+   width: 100%;
+   aspect-ratio: 4 / 3;
+   background-repeat: no-repeat;
+   background-size: cover;
+   position: relative;
+   overflow: hidden;
+}
+
+.work-ol {
+   padding-left: 20px;
+   font-size: 14px;
+   list-style: decimal;
+   line-height: 24px;
+}
+
+.work-ol li {
+   list-style: outside decimal;
+}
+
 /* ------------------------- Work Page - Deveron -------------------------------------------------- */
 .img-deveron-1 {
    margin-bottom: 170px;
 }
 
 .deveron-as {
-   width: 100%;
-   aspect-ratio: 4 / 3;
    background-image: url(../img/work/deveron/background-2.jpg);
-   background-repeat: no-repeat;
-   background-size: cover;
-   position: relative;
-   overflow: hidden;
 }
 
 .deveron-as .main-img {
@@ -1874,11 +1904,6 @@ main.touch .main-wrap {
 
 .bg-deveron {
    background-image: url(../img/work/deveron/background.jpg);
-   background-repeat: no-repeat;
-   background-size: cover;
-   color: var(--color-white);
-   padding-top: 190px;
-   padding-bottom: 190px;
 }
 
 .final-block-deveron {
@@ -1924,6 +1949,128 @@ main.touch .main-wrap {
 .work-goals-wrap img:nth-child(5) {
    top: 40%;
    left: 40%;
+}
+/* ------------------------- Work Page - Cox -------------------------------------------------- */
+.bg-cox {
+   background-image: url(../img/work/cox/background.jpg);
+}
+
+.final-block-cox {
+   padding-bottom: 175px;
+}
+
+.cox-as {
+   background-image: url(../img/work/cox/background-2.jpg);
+   background-color: #DDE0F6E5;
+   background-blend-mode: overlay;
+}
+
+.cox-as .main-img {
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   width: 40%;
+   transform: translate(-50%, -50%);
+   transition: all 1s ease-in-out;
+   z-index: 1;
+}
+
+.cox-as img {
+   box-shadow: 0px 2.27px 16.67px 0px #1C1B7612;
+   border-radius: 15px;
+   width: 100%;
+}
+
+.cox-as .back-img img {
+   border-radius: 12px;
+}
+
+.cox-as .back-img img:not(:last-child) {
+   margin-bottom: 10%;
+}
+
+.cox-as .main-img.is-inview {
+   transform: translate(0, -50%);
+}
+
+.cox-as .back-img .col-1 {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -200%);
+   transition: all 1s ease-in-out;
+   width: 20%;
+}
+
+.cox-as .back-img .col-2 {
+   position: absolute;
+   top: 50%;
+   left: 28%;
+   transform: translate(-50%, 200%);
+   transition: all 1s ease-in-out;
+   width: 20%;
+}
+
+.cox-as .back-img.is-inview .col-1 {
+   transform: translate(-50%, -50%);
+}
+
+.cox-as .back-img.is-inview .col-2 {
+   transform: translate(-50%, -50%);
+}
+
+/* ------------------------- Work Page - Chick-Fil-A -------------------------------------------------- */
+.bg-chickfila {
+   background-image: url(../img/work/chick-fil-a/background.jpg);
+}
+
+.final-block-chickfila {
+   background-color: #434B4F;
+}
+
+.chickfila-as {
+   background-image: url(../img/work/chick-fil-a/background-2.jpg);
+}
+
+.chickfila-as .back-img {
+   display: flex;
+   align-items: center;
+   gap: 2%;
+   rotate: 30deg;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   translate: -50% -50%;
+   width: 70%;
+}
+
+.chickfila-as .back-img > div {
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   gap: 10%;
+}
+
+.chickfila-as .back-img img {
+   margin-bottom: 10%;
+}
+
+.chickfila-as .down {
+   translate: 0 -150%;
+   transition: all 1s ease-in-out;
+}
+
+.chickfila-as .up {
+   translate: 0 150%;
+   transition: all 1s ease-in-out;
+}
+
+.chickfila-as .back-img.is-inview .down {
+   translate: 0 0;
+}
+
+.chickfila-as .back-img.is-inview .up {
+   translate: 0 0;
 }
 
 /* ------------------------- Mouse Position Image -------------------------------------------------- */
@@ -3186,9 +3333,9 @@ main.touch .main-wrap {
    margin-right: 0;
 }
 
-.case-intro .row .flex-col:last-child li {
+/* .case-intro .row .flex-col:last-child li {
    display: inline-block;
-}
+} */
 
 .case-intro .row .flex-col .stripe {
    margin: 1.75em 0 1.5em 0;
@@ -3228,7 +3375,7 @@ main.touch .main-wrap {
    padding-bottom: var(--section-padding);
 }
 
-.case-intro-image .btn-wrap {
+:is(.case-intro-image, .device-frame-section) .btn-wrap {
    position: absolute;
    top: 0;
    right: 0;
