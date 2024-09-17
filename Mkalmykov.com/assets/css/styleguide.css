@@ -163,7 +163,7 @@ h1 {
     font-family: 'Michael Sans', sans-serif;
     font-weight: 450;
     font-style: normal;
-    font-size: clamp(3.25em, 7vw, 8em);
+    font-size: clamp(3.75em, 7vw, 9em);
     line-height: 1.065;
     margin-bottom: 1em;
     font-size: calc(clamp(3.25em, 7vw, 8em) * .875);
@@ -173,7 +173,7 @@ h2 {
     font-family: 'Michael Sans', sans-serif;
     font-weight: 450;
     font-style: normal;
-    font-size: calc(clamp(3.25em, 5vw, 4.5em) * .75);
+    font-size: calc(clamp(3.75em, 5vw, 5em) * .75);
     line-height: 1.065;
     margin-bottom: .66em;
 }
@@ -182,7 +182,7 @@ h3 {
     font-family: 'Michael Sans', sans-serif;
     font-weight: 450;
     font-style: normal;
-    font-size: clamp(2.66em, 4.65vw, 5.32em);
+    font-size: clamp(2.96em, 4.65vw, 5.82em);
     line-height: 1.065;
     margin-bottom: 1em;
 }
@@ -191,8 +191,8 @@ h4 {
     font-family: 'Michael Sans', sans-serif;
     font-weight: 450;
     font-style: normal;
-    font-size: clamp(1.55em, 2.3vw, 2.5em);
-    line-height: 1.45;
+    font-size: clamp(1.85em, 2.3vw, 2.8em);
+    line-height: 1.75;
     margin-bottom: 1em;
 }
 
@@ -200,7 +200,7 @@ h5 {
     font-family: 'Michael Sans', sans-serif;
     font-weight: 450;
     font-style: normal;
-    font-size: .6em;
+    font-size: .8em;
     line-height: 1.065;
     margin-bottom: 1em;
     text-transform: uppercase;
@@ -214,7 +214,7 @@ p {
     font-weight: 450;
     font-style: normal;
     color: var(--text);
-    font-size: 1em;
+    font-size: 1.3em;
     line-height: 1.66;
     margin-bottom: 1em;
 }
