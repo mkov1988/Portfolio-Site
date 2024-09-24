@@ -1633,19 +1633,19 @@ main.touch .main-wrap {
 }
 
 .work-h3{
-   font-size: 32px;
-   margin-bottom: 12px;
+   font-size: 40px;
+   margin-bottom: 18px;
 }
 
 .work-h4{
-   font-size: 24px;
-   line-height: 44px;
+   font-size: 32px;
+   line-height: 50px;
    margin-bottom: auto;
 }
 
 .work-p {
-   font-size: 14px;
-   line-height: 24px;
+   font-size: 18px;
+   line-height: 30px;
    margin-bottom: 24px;
 }
 
