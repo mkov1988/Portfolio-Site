@@ -437,6 +437,26 @@ function initPageTransitions() {
         initCookieViews();
         initLoaderHome();
       },
+    },
+    {
+      name: 'to-tools',
+      to: {
+        namespace: ['tools']
+      },
+      once(data) {
+        initSmoothScroll(data.next.container);
+        initScript();
+        initCookieViews();
+        initLoader();
+        if (typeof initHouseCalculator === 'function') initHouseCalculator();
+      },
+      async beforeEnter(data) {
+        ScrollTrigger.getAll().forEach(t => t.kill());
+        scroll.destroy();
+        initSmoothScroll(data.next.container);
+        initScript(); 
+        if (typeof initHouseCalculator === 'function') initHouseCalculator();
+      }
     }]
   });
 

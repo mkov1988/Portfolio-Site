@@ -1,0 +1,6 @@
+# Claude Code config
+.claude/
+
+
+# Quarantined handoff/Gemini scratch — safe to delete after review
+.cruft-handoff/

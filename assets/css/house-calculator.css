@@ -1,0 +1,182 @@
+/* ── Portfolio-aligned token overrides ── */
+.calculator-section {
+  background-color: var(--bg);
+  color: var(--text);
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --border: rgba(28, 29, 32, 0.175);
+  --text: #1C1D20;
+  --text-secondary: #6b7280;
+  --accent: #455CE9;
+  --accent-light: #eef2ff;
+  --input-bg: #FFFFFF;
+  --radius: 0.6rem;
+  --radius-sm: 0.4rem;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --s1-color: #455CE9;
+  --s2-color: #7c3aed;
+}
+
+/* Dark mode overrides */
+.calculator-section[data-theme="dark"] {
+  --bg: #1C1D20;
+  --surface: #1f2937;
+  --border: rgba(255, 255, 255, 0.2);
+  --text: #FFFFFF;
+  --text-secondary: #9ca3af;
+  --accent: #455CE9;
+  --input-bg: #111827;
+}
+
+/* Typography swap */
+.calculator-section,
+.calculator-section *,
+.calculator-section input,
+.calculator-section select,
+.calculator-section button {
+  font-family: 'Michael Sans', sans-serif !important;
+}
+
+.calculator-section .panel-title,
+.calculator-section .bottom-line-title,
+.calculator-section .scenario-label {
+  font-weight: 800;
+}
+
+/* Section toggle tabs */
+.calc-section-toggle {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1.5rem 0 2rem;
+}
+.calc-section-toggle .section-nav-btn {
+  font-family: 'Michael Sans', sans-serif;
+  font-weight: 450;
+  font-size: 1em;
+  padding: 0.8em 2em;
+  border: 1px solid var(--color-border);
+  border-radius: 2.125em;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+}
+.calc-section-toggle .section-nav-btn.active {
+  background: var(--color-blue);
+  color: white;
+  border-color: var(--color-blue);
+}
+
+/* Hide original app bar */
+.app-bar { display: none !important; }
+
+/* Locomotive scroll fix for desktop sticky */
+@media (min-width: 1025px) {
+  .calculator-section .app-container,
+  .invest-section {
+    display: grid;
+    grid-template-columns: clamp(300px, 25vw, 400px) 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .calculator-section .inputs-panel,
+  .invest-inputs-panel {
+    position: relative;
+    top: auto;
+  }
+}
+main.touch .calculator-section .inputs-panel,
+main.touch .invest-inputs-panel {
+  position: sticky;
+  top: 1rem;
+}
+
+.calculator-section .app-container {
+  margin: 0 auto;
+  max-width: 100em;
+}
+
+/* Theme Toggle utility */
+.theme-toggle-utility {
+  position: fixed;
+  bottom: var(--gap-padding);
+  right: var(--gap-padding);
+  z-index: 50;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--color-dark);
+  color: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--animation-primary);
+}
+
+/* Email Capture Card */
+.email-capture-card {
+  background: var(--color-dark);
+  border-radius: 1rem;
+  padding: 3rem;
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+  color: var(--color-white);
+}
+.email-capture-card h4 {
+  font-family: 'Michael Sans', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-white);
+}
+.email-input-wrap {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.email-input-wrap input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border-radius: 2.125rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+.btn-email-submit {
+  padding: 1rem 2rem;
+  border-radius: 2.125rem;
+  background: var(--color-blue);
+  color: white;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.email-success-msg {
+  color: #4ade80;
+  margin-top: 1rem;
+  display: none;
+}
+
+/* Creator Plaque adjustments */
+.creator-plaque {
+  padding-bottom: 4rem;
+}
+.creator-identity {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-image: url('../img/DSC07033-2.jpg');
+  background-size: cover;
+  background-position: center;
+}
