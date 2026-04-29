@@ -1,0 +1,304 @@
+/* ── Tool shell ────────────────────────────────────────────────────────────
+   Layer 2 of the tools architecture. Sits between portfolio chrome
+   (Layer 1: top nav, loading screen, fonts) and tool-specific UI
+   (Layer 3: e.g. calculator-core.css + house-calculator.css).
+
+   Provides shared chrome for every utilitarian tool:
+   - Slim hero (~25vh) — title + one-line value prop, no scroll-fluff
+   - Byline footer — single-line attribution + cross-links to sibling tools
+
+   Inherits portfolio CSS variables (--color-text, --color-light,
+   --color-border-light, --color-blue, --animation-primary) from
+   styleguide.css. Tool-specific tokens (--bg, --text, --accent) are
+   defined inside .calculator-section etc. — this file does not touch them.
+   ────────────────────────────────────────────────────────────────────── */
+
+/* ── Slim hero ─────────────────────────────────────────────────────────── */
+/* Cancel the case-study giant padding that .default-header bakes in
+   (components.css applies padding ~1.33 * --section-padding top + .66 * bottom).
+   For tool pages, we want the hero to be slim. */
+.default-header:has(.tool-hero) {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.tool-hero {
+  padding: clamp(5rem, 12vh, 9rem) 0 clamp(2rem, 4vh, 3rem);
+}
+
+.tool-hero h1 {
+  font-size: clamp(2.5rem, 4.5vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  margin: 0 0 0.4em;
+}
+
+.tool-hero .tool-value-prop {
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  color: var(--color-light);
+  max-width: 60ch;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Dark-themed hero (calc lands dark by default) */
+.tool-hero.theme-dark {
+  color: var(--color-white);
+}
+.tool-hero.theme-dark .tool-value-prop {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Byline footer ─────────────────────────────────────────────────────── */
+.tool-byline {
+  padding: 2.5rem 0 4rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.tool-byline-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem 2rem;
+}
+
+.tool-byline-author {
+  font-size: 0.9rem;
+  color: var(--color-light);
+  margin: 0;
+}
+
+.tool-byline-author a {
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.tool-byline-cross {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tool-byline-cross-label {
+  font-size: 0.8rem;
+  color: var(--color-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 0.5rem;
+}
+
+.tool-byline-cross a {
+  font-size: 0.875rem;
+  padding: 0.45em 1.1em;
+  border: 1px solid var(--color-border-light);
+  border-radius: 2.125em;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: var(--animation-primary);
+  white-space: nowrap;
+}
+
+.tool-byline-cross a:hover {
+  border-color: var(--color-blue);
+  color: var(--color-blue);
+}
+
+/* Dark-themed byline (sits below a dark tool section) */
+.tool-byline.theme-dark {
+  background: var(--color-dark, #1c1d20);
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+.tool-byline.theme-dark .tool-byline-author,
+.tool-byline.theme-dark .tool-byline-cross-label {
+  color: rgba(255, 255, 255, 0.55);
+}
+.tool-byline.theme-dark .tool-byline-author a,
+.tool-byline.theme-dark .tool-byline-cross a {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.tool-byline.theme-dark .tool-byline-cross a:hover {
+  border-color: var(--color-blue);
+  color: var(--color-blue);
+}
+
+/* ── Mobile ────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .tool-byline-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .tool-byline-cross {
+    width: 100%;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Tools index page (tools.html)
+   Grid of tool cards, used only on the index. Lives here because it's
+   the index half of the same architecture: shell + index = the tools layer.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.tools-index-section {
+  padding: clamp(2rem, 6vh, 5rem) 0 clamp(6rem, 12vh, 9rem);
+  background: var(--color-dark, #1c1d20);
+  color: var(--color-white, #fff);
+}
+.tools-index-section.theme-dark {
+  background: var(--color-dark, #1c1d20);
+  color: var(--color-white, #fff);
+}
+
+.tools-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1),
+              border-color 0.4s ease,
+              background 0.4s ease;
+  position: relative;
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tool-card-preview {
+  aspect-ratio: 320 / 200;
+  width: 100%;
+  background: linear-gradient(135deg, #1a1c25 0%, #0f1219 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.tool-card-preview svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tool-card-body {
+  padding: clamp(1.5rem, 2.5vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.tool-card-title {
+  font-family: 'Michael Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2vw, 1.85rem);
+  line-height: 1.1;
+  margin: 0;
+  color: #FFFFFF;
+}
+
+.tool-card-prop {
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.tool-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-blue, #455CE9);
+  margin-top: 0.5rem;
+  transition: gap 0.3s ease;
+}
+
+.tool-card:hover .tool-card-cta {
+  gap: 0.7rem;
+}
+
+.tool-card-cta .arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.tool-card:hover .tool-card-cta .arrow {
+  transform: translateX(2px);
+}
+
+/* ── In the lab variant ─────────────────────────────────────────────────
+   Distinct visual treatment for tools that aren't shippable yet.
+   - Dimmed/desaturated preview area
+   - Floating "In the lab" badge
+   - CTA reads "Coming soon" without an active link affordance
+   - Cursor indicates non-interactivity
+*/
+.tool-card-lab {
+  cursor: default;
+  background: rgba(255, 255, 255, 0.025);
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.tool-card-lab:hover {
+  /* No lift, no border highlight — it's not clickable */
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.tool-card-lab .tool-card-preview {
+  filter: grayscale(0.6) opacity(0.6);
+  background: linear-gradient(135deg, #14161e 0%, #0a0c12 100%);
+}
+
+.tool-card-lab .tool-card-title {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tool-card-lab .tool-card-prop {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tool-card-cta-soon {
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.tool-card-lab-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0.4em 0.85em;
+  border-radius: 2em;
+  backdrop-filter: blur(8px);
+}
