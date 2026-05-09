@@ -1,7 +1,64 @@
+/* ── SaaS App Bar ── */
+.default-header:has(.saas-app-bar) {
+  /* Provide just enough top padding so the nav bar isn't cut off */
+  padding-top: calc(var(--section-padding) * 0.5) !important; 
+  padding-bottom: 0 !important;
+}
+
+.saas-app-bar {
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 0; 
+}
+
+.saas-app-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.saas-app-branding {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.saas-app-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.saas-app-title {
+  font-family: 'Michael Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.saas-app-desc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .saas-app-bar-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
 /* ── Portfolio-aligned token overrides ── */
 .calculator-section {
   background-color: var(--bg);
   color: var(--text);
+  padding-top: 2rem !important; /* Overrides default .section padding to close gap with saas bar */
   --bg: #FFFFFF;
   --surface: #FFFFFF;
   --border: rgba(28, 29, 32, 0.175);
@@ -121,66 +178,204 @@ main.touch .invest-inputs-panel {
   transition: var(--animation-primary);
 }
 
-/* Email Capture Card */
+/* ── Email Capture Card (inline, end-of-results) ── */
 .email-capture-card {
-  background: var(--color-dark);
+  background: #1C1D20;
   border-radius: 1rem;
-  padding: 3rem;
-  margin-top: 4rem;
-  margin-bottom: 2rem;
-  color: var(--color-white);
+  padding: 2.25rem 2.25rem 2rem;
+  margin: 1.5rem 0 0.5rem;
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
 }
+.email-capture-card::before {
+  /* subtle accent glow so the card doesn't feel like a banner ad */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 0% 0%, rgba(69, 92, 233, 0.18), transparent 55%);
+  pointer-events: none;
+}
+.email-capture-card > * { position: relative; }
 .email-capture-card h4 {
   font-family: 'Michael Sans', sans-serif;
   font-weight: 800;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: var(--color-white);
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4rem;
+  color: #FFFFFF;
 }
-.email-input-wrap {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-.email-input-wrap input {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  border-radius: 2.125rem;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.05);
-  color: white;
-}
-.btn-email-submit {
-  padding: 1rem 2rem;
-  border-radius: 2.125rem;
-  background: var(--color-blue);
-  color: white;
-  border: none;
-  font-weight: 800;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.email-success-msg {
-  color: #4ade80;
-  margin-top: 1rem;
-  display: none;
+.email-capture-card .email-sub {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
 }
 
-/* Creator Plaque adjustments */
-.creator-plaque {
-  padding-bottom: 4rem;
+/* Honeypot — visually + assistive-tech hidden, but bots see it. */
+.email-capture-card .hp-field {
+  position: absolute !important;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
-.creator-identity {
+
+.email-input-wrap {
   display: flex;
-  gap: 2rem;
-  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  align-items: stretch;
 }
-.profile-picture {
-  width: 120px;
-  height: 120px;
+.email-input-wrap input[type="email"] {
+  flex: 1;
+  min-width: 0;
+  padding: 0.85rem 1.25rem;
+  border-radius: 2.125rem;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.email-input-wrap input[type="email"]:focus {
+  outline: none;
+  border-color: rgba(69, 92, 233, 0.7);
+  background: rgba(255,255,255,0.09);
+}
+.email-input-wrap input[type="email"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-email-submit {
+  position: relative;
+  padding: 0.85rem 1.6rem;
+  min-width: 11rem;
+  border-radius: 2.125rem;
+  background: #455CE9;
+  color: white;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s ease, transform 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-email-submit:hover:not(:disabled) { background: #3a4ec7; }
+.btn-email-submit:active:not(:disabled) { transform: translateY(1px); }
+.btn-email-submit:disabled { cursor: not-allowed; }
+
+.btn-email-submit .btn-spinner,
+.btn-email-submit .btn-check { display: none; }
+
+.btn-email-submit .btn-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
   border-radius: 50%;
-  background-image: url('../img/DSC07033-2.jpg');
-  background-size: cover;
-  background-position: center;
+  animation: hcSpin 0.7s linear infinite;
+}
+@keyframes hcSpin { to { transform: rotate(360deg); } }
+
+.email-fine-print {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0.85rem 0 0;
+}
+
+/* ── State machine (data-state on .email-capture-card) ── */
+.email-status-msg {
+  display: none;
+  margin: 0.85rem 0 0;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.email-success-msg {
+  background: rgba(74, 222, 128, 0.12);
+  color: #86efac;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+.email-error-msg {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* SENDING — show spinner, hide label/check */
+.email-capture-card[data-state="sending"] .btn-email-submit { background: #3a4ec7; }
+.email-capture-card[data-state="sending"] .btn-email-submit .btn-label { opacity: 0.55; }
+.email-capture-card[data-state="sending"] .btn-email-submit .btn-spinner {
+  display: inline-block;
+  margin-left: 0.55rem;
+}
+
+/* SUCCESS — green button, swap label/check, reveal success msg */
+.email-capture-card[data-state="success"] .btn-email-submit {
+  background: #16a34a;
+}
+.email-capture-card[data-state="success"] .btn-email-submit .btn-label { display: none; }
+.email-capture-card[data-state="success"] .btn-email-submit .btn-check {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.email-capture-card[data-state="success"] #emailSuccessMsg { display: block; }
+.email-capture-card[data-state="success"] .email-fine-print { display: none; }
+
+/* ERROR — show error msg, keep form usable so user can retry */
+.email-capture-card[data-state="error"] #emailErrorMsg { display: block; }
+.email-capture-card[data-state="error"] .email-input-wrap input[type="email"] {
+  border-color: rgba(239, 68, 68, 0.55);
+}
+
+@media (max-width: 540px) {
+  .email-capture-card { padding: 1.75rem 1.5rem; }
+  .email-input-wrap { flex-direction: column; gap: 0.55rem; }
+  .btn-email-submit { width: 100%; min-width: 0; }
+}
+
+/* (.creator-plaque, .creator-identity, .profile-picture removed — moved to slim tool-byline in tool-shell.css) */
+
+/* Scenario 2: two-column split for Down payment / Invest the Rest. */
+.scenario-box.s2 .s2-split {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.scenario-box.s2 .s2-split-col {
+  flex: 1 1 0;
+  min-width: 0; /* allow the input to shrink instead of overflowing */
+}
+.scenario-box.s2 .s2-split-col--right { text-align: right; }
+.scenario-box.s2 .s2-input-row {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.scenario-box.s2 input#s2DownInput,
+.scenario-box.s2 input#s2InvestInput {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Mobile: stack the two columns so labels & inputs have full width. */
+@media (max-width: 540px) {
+  .scenario-box.s2 .s2-split { flex-direction: column; }
+  .scenario-box.s2 .s2-split-col,
+  .scenario-box.s2 .s2-split-col--right { text-align: left; }
+  .scenario-box.s2 .s2-split-col--right .s2-input-row { justify-content: flex-start !important; }
 }

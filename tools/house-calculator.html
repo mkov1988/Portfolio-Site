@@ -6,15 +6,15 @@
 <head>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-      <title>House Calculator - Mortgage & Investment Decisions | Michael Kalmykov</title>
-      <meta name="description" content="Helping brands thrive in the digital world. Located in Atlanta. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis"/>
-      <meta property="og:title" content="House Calculator - Michael Kalmykov"/>
-      <meta property="og:description" content="Helping brands thrive in the digital world. Located in Atlanta. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis"/>
+      <title>House Calculator — Should I put more down or invest the difference? | Michael Kalmykov</title>
+      <meta name="description" content="A free calculator that compares two home-buying scenarios: max down payment vs. minimum down + investing the difference. See which leaves you wealthier over 30 years."/>
+      <meta property="og:title" content="House Calculator — Michael Kalmykov"/>
+      <meta property="og:description" content="Compare max down payment vs. minimum down + investing the difference. See which leaves you wealthier over 30 years."/>
       <meta property="og:image" content="../media/site/89d468b455-1646837228/meta-image-michael-kalmykov-860x540-crop-q72.jpg"/>
       <meta property="og:site_name" content="Michael Kalmykov"/>
                               <meta property="og:locale" content="en"/>
       <meta property="og:type" content="website"/>      <meta property="twitter:title" content="House Calculator - Michael Kalmykov"/>
-      <meta property="twitter:description" content="Helping brands thrive in the digital world. Located in Atlanta. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis"/>
+      <meta property="twitter:description" content="Compare max down payment vs. minimum down + investing the difference. See which leaves you wealthier over 30 years."/>
       <meta property="twitter:image" content="../media/site/89d468b455-1646837228/meta-image-michael-kalmykov-860x540-crop-q72.jpg"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="google" content="notranslate"/>
@@ -36,9 +36,19 @@
          gtag('config', 'G-SGWQQRQ15Y');
 		</script>
       
-       <link href="../assets/css/calculator-core.css" rel="stylesheet">
+       <link href="../assets/css/tool-shell.css" rel="stylesheet">
+    <link href="../assets/css/calculator-core.css" rel="stylesheet">
     <link href="../assets/css/house-calculator.css" rel="stylesheet">
+    <link href="../assets/css/onboarding-wizard.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init({
+              publicKey: "YOUR_PUBLIC_KEY",
+            });
+        })();
+    </script>
 </head>
 
     <body data-barba="wrapper">
@@ -115,15 +125,15 @@
                                 </span>
                                 </a>
                             </li>
-                            <li class="btn btn-link active">
+                            <li class="btn btn-link">
                                 <a href="../work.html" class="btn-click magnetic" data-barba-prevent="all" data-strength="24" data-strength-text="12">
                                 <span class="btn-text">
                                     <span class="btn-text-inner">Work</span>
                                 </span>
                                 </a>
                             </li>
-                            <li class="btn btn-link">
-                                <a href="../tools/house-calculator.html" class="btn-click magnetic" data-barba-prevent="all" data-strength="24" data-strength-text="12">
+                            <li class="btn btn-link active">
+                                <a href="../tools.html" class="btn-click magnetic" data-barba-prevent="all" data-strength="24" data-strength-text="12">
                                 <span class="btn-text">
                                     <span class="btn-text-inner">Tools</span>
                                 </span>
@@ -184,34 +194,34 @@
                     </div>
                 </div>
             </div>
-            <div class="main-wrap" data-scroll-container><section class="section case-top-wrap " >
+            <div class="main-wrap" data-scroll-container><span class="once-in" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;"></span><section class="section case-top-wrap " >
 <!-- ══════════════════════════════════════════════════════════════════════ HERO HEADER ══════════════════════════════════════════════════════════════════════ -->
-<header class="section default-header case-header calc-hero theme-dark" data-scroll-section>
+<header class="section default-header theme-dark" data-scroll-section>
    <div class="nav-bar">
     <div class="credits-top"><div class="btn btn-link btn-left-top"><a href="../index.html" class="btn-click"><span class="btn-text"><div class="credit"><span>&copy;</span></div><div class="cbd"><span class="michael">Michael Kalmykov</span></div></span></a></div></div>
     <ul class="links-wrap">
         <li class="btn btn-link"><a href="../work.html" class="btn-click"><span class="btn-text">Work</span></a></li>
-        <li class="btn btn-link active"><a href="house-calculator.html" class="btn-click"><span class="btn-text">Tools</span></a></li>
+        <li class="btn btn-link active"><a href="../tools.html" class="btn-click"><span class="btn-text">Tools</span></a></li>
         <li class="btn btn-link"><a href="../about.html" class="btn-click"><span class="btn-text">About</span></a></li>
         <li class="btn btn-link"><a href="../contact.html" class="btn-click"><span class="btn-text">Contact</span></a></li>
         <li class="btn btn-link btn-menu"><div class="btn-click"><span class="btn-text">Menu</span></div></li>
     </ul>
    </div>
-   <div class="container medium once-in">
-      <div class="row"><div class="flex-col">
-         <h1><span>House</span> <span>Calculator</span></h1>
-         <p class="calc-hero-sub" style="margin-top:1em; font-size:1.2rem;">Make data-driven decisions about your home and your money.</p>
-      </div></div>
+   <div class="saas-app-bar theme-dark">
+     <div class="container">
+       <div class="saas-app-bar-inner">
+         <div class="saas-app-branding">
+            <span class="saas-app-icon">🏠</span>
+            <h1 class="saas-app-title">House Calculator</h1>
+         </div>
+         <p class="saas-app-desc">Should I put more down, or invest the difference?</p>
+       </div>
+     </div>
    </div>
 </header>
 <!-- ══════════════════════════════════════════════════════════════════════ SECTION TOGGLE ══════════════════════════════════════════════════════════════════════ -->
 <section class="section calculator-section" data-theme="dark" data-scroll-section>
-    <div class="container medium once-in">
-        <div class="calc-section-toggle">
-            <button class="section-nav-btn active" data-section="mortgage-calculator">Mortgage vs. Invest</button>
-            <button class="section-nav-btn" data-section="investment-calculator">Investment Growth</button>
-        </div>
-    </div>
+    <!-- toggle removed: mortgage and investment now live on separate pages -->
 
 <!-- ══════════════════════════════════════════════════════════════════════ CALCULATOR CONTENT ══════════════════════════════════════════════════════════════════════ -->
 
@@ -238,9 +248,9 @@
                             buying.</span></span></label>
                 <div class="input-row">
                     <span class="unit">$</span>
-                    <input type="number" id="homePrice" value="750000" step="10000" min="100000" max="3000000">
+                    <input type="text" inputmode="numeric" id="homePrice" value="750,000">
                 </div>
-                <input type="range" id="homePriceSlider" min="100000" max="3000000" step="10000" value="750000">
+                <input type="range" id="homePriceSlider" min="0" max="2000000" step="10000" value="750000">
             </div>
 
             <!-- Total Available Cash -->
@@ -251,7 +261,7 @@
                             investing.</span></span></label>
                 <div class="input-row">
                     <span class="unit">$</span>
-                    <input type="number" id="totalCash" value="550000" step="10000" min="0" max="3000000">
+                    <input type="text" inputmode="numeric" id="totalCash" value="550,000">
                 </div>
                 <input type="range" id="totalCashSlider" min="0" max="3000000" step="10000" value="550000">
             </div>
@@ -273,26 +283,26 @@
             <div class="scenario-box s2">
                 <div class="scenario-label">Scenario 2: Invest the Difference</div>
 
-                <div style="display: flex; justify-content: space-between; margin-top: 12px; margin-bottom: 12px;">
-                    <div>
+                <div class="s2-split">
+                    <div class="s2-split-col">
                         <label for="s2DownInput"
                             style="font-size: 0.875rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 4px; display: block;">
                             Down payment</label>
-                        <div class="input-row" style="margin: 0;">
+                        <div class="input-row s2-input-row" style="margin: 0;">
                             <span class="unit" style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color);">$</span>
-                            <input type="number" id="s2DownInput" value="150000" min="0" step="1000"
-                                style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color); width: 120px; border: 1px dashed var(--border); background: transparent; padding: 2px 6px;">
+                            <input type="text" inputmode="numeric" id="s2DownInput" value="150,000"
+                                style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color); border: 1px dashed var(--border); background: transparent; padding: 2px 6px;">
                         </div>
                         <input type="hidden" id="s2Down" value="150000">
                     </div>
-                    <div style="text-align: right;">
+                    <div class="s2-split-col s2-split-col--right">
                         <label for="s2InvestInput"
                             style="font-size: 0.875rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 4px; display: block;">
                             Invest the Rest</label>
-                        <div class="input-row" style="margin: 0; justify-content: flex-end;">
+                        <div class="input-row s2-input-row" style="margin: 0; justify-content: flex-end;">
                             <span class="unit" style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color);">$</span>
-                            <input type="number" id="s2InvestInput" value="400000" min="0" step="1000"
-                                style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color); width: 120px; border: 1px dashed var(--border); background: transparent; padding: 2px 6px; text-align: right;">
+                            <input type="text" inputmode="numeric" id="s2InvestInput" value="400,000"
+                                style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color); border: 1px dashed var(--border); background: transparent; padding: 2px 6px; text-align: right;">
                         </div>
                         <input type="hidden" id="s2Invest" value="400000">
                     </div>
@@ -333,7 +343,7 @@
             </div>
 
             <!-- Advanced Settings -->
-            <div class="advanced-toggle" id="advancedToggle" onclick="toggleAdvanced()">
+            <div class="advanced-toggle" id="advancedToggle">
                 <span>Advanced Settings</span>
                 <span class="chevron">▼</span>
             </div>
@@ -633,235 +643,67 @@
                 </div>
             </div>
 
+            <!-- ── EMAIL CAPTURE (inline, end of journey) ── -->
+            <section class="email-capture-card" id="emailCapture" data-state="idle" aria-labelledby="emailCaptureTitle">
+                <h4 id="emailCaptureTitle">Save This Scenario</h4>
+                <p class="email-sub">Get a clean breakdown of your numbers in your inbox — yours to revisit, share, or send to a partner.</p>
+                <form class="email-form" id="emailForm" novalidate>
+                    <!-- Honeypot: real users never see/fill this. Bots typically will. -->
+                    <div class="hp-field" aria-hidden="true">
+                        <label for="hc_company">Company</label>
+                        <input type="text" id="hc_company" name="hc_company" tabindex="-1" autocomplete="off">
+                    </div>
+                    <div class="email-input-wrap">
+                        <input type="email" id="captureEmail" name="email"
+                               placeholder="you@example.com"
+                               autocomplete="email" inputmode="email"
+                               spellcheck="false" required
+                               aria-describedby="emailFinePrint emailErrorMsg">
+                        <button type="submit" class="btn-email-submit" id="sendEmailBtn">
+                            <span class="btn-label">Send My Report</span>
+                            <span class="btn-spinner" aria-hidden="true"></span>
+                            <span class="btn-check" aria-hidden="true">✓</span>
+                        </button>
+                    </div>
+                    <p class="email-fine-print" id="emailFinePrint">One email. No follow-ups, no list. Unsubscribe link included.</p>
+                </form>
+                <div class="email-status-msg email-success-msg" id="emailSuccessMsg" role="status" aria-live="polite">
+                    ✓ Sent! Check your inbox in the next minute or two.
+                </div>
+                <div class="email-status-msg email-error-msg" id="emailErrorMsg" role="alert" aria-live="assertive">
+                    Couldn't send right now — please try again in a moment.
+                </div>
+            </section>
+
             <!-- Cross-link to Investment Growth -->
-            <div class="cross-link" id="mortgage-to-invest" onclick="switchSection('investment-calculator')">
+            <a class="cross-link" id="mortgage-to-invest" href="investment-calculator.html" data-barba-prevent="all">
                 <span>📈</span>
-                <span id="mortgage-to-invest-text">Want to explore how the invested difference grows? See it in the Investment Growth Calculator</span>
+                <span id="mortgage-to-invest-text">Want to explore how the invested difference grows? See it in the Investment Calculator</span>
                 <span class="cross-link-arrow">→</span>
-            </div>
+            </a>
 
         </div>
     </div>
-
-    <!-- ═══════════════════════════════════════════════
-         INVESTMENT GROWTH CALCULATOR SECTION
-         ═══════════════════════════════════════════════ -->
-    <div class="section-divider" aria-hidden="true">
-        <span class="divider-ornament">◆</span>
-    </div>
-
-    <section id="investment-calculator" class="invest-section invest-grid">
-
-        <!-- ─── LEFT: INPUTS ─── -->
-        <aside class="invest-inputs-panel card">
-            <div class="panel-title">📈 Your Inputs</div>
-            <div class="panel-subtitle">Set your investment parameters</div>
-
-            <div class="input-group">
-                <label for="invest-initial">Initial Investment</label>
-                <div class="input-row">
-                    <span class="unit">$</span>
-                    <input type="number" id="invest-initial-num" value="10000" min="0" max="1000000" step="500">
-                </div>
-                <input type="range" id="invest-initial" min="0" max="1000000" step="500" value="10000">
-            </div>
-
-            <div class="input-group">
-                <label for="invest-monthly">Monthly Contribution</label>
-                <div class="input-row">
-                    <span class="unit">$</span>
-                    <input type="number" id="invest-monthly-num" value="500" min="0" max="10000" step="50">
-                </div>
-                <input type="range" id="invest-monthly" min="0" max="10000" step="50" value="500">
-            </div>
-
-            <div class="input-group">
-                <label for="invest-years">Time Horizon</label>
-                <div class="input-row">
-                    <input type="number" id="invest-years-num" value="25" min="1" max="50" step="1">
-                    <span class="unit">yrs</span>
-                </div>
-                <input type="range" id="invest-years" min="1" max="50" step="1" value="25">
-            </div>
-
-            <!-- Fund pills -->
-            <div class="invest-funds-row">
-                <span class="invest-funds-label">Fund Types</span>
-                <div class="invest-pills" id="invest-pills">
-                    <!-- Pills generated by JS from FUND_CONFIG -->
-                </div>
-                <p class="invest-nominal-note">Select multiple to compare · Returns shown are nominal (not adjusted for inflation)</p>
-            </div>
-
-            <!-- Customize toggle -->
-            <div class="advanced-toggle" id="invest-advanced-toggle">
-                <span style="color:var(--accent);">Customize Assumptions</span>
-                <span class="chevron">▾</span>
-            </div>
-            <div class="invest-advanced-body" id="invest-advanced-body">
-                <!-- Generated by JS based on selected funds -->
-            </div>
-
-            <!-- Fee Card (visible only when Advanced is open) -->
-            <div class="card invest-fee-card" id="invest-fee-card" hidden>
-                <div class="fee-card-header">💡 Fee Impact</div>
-                <div class="fee-card-body" id="invest-fee-body"></div>
-            </div>
-
-            <!-- How It Works -->
-            <div class="how-it-works">
-                <div class="hiw-title">📋 How It Works</div>
-                <div class="hiw-body">
-                    This calculator compounds your initial investment and monthly contributions at each fund's historical average return, minus its annual expense ratio. Contributions are assumed to be made monthly. All values are <strong>nominal — not adjusted for inflation</strong>. Use the Customize panel to adjust return assumptions and model contribution increases over time.
-                </div>
-            </div>
-        </aside>
-
-        <!-- ─── RIGHT: OUTPUTS ─── -->
-        <div class="invest-output-panel">
-
-            <!-- Summary Banner -->
-            <div class="invest-banner card" id="invest-banner">
-                <div class="invest-banner-eyebrow">Projected Portfolio Value after <span id="invest-banner-years">25</span> years<span class="tooltip-wrap" id="invest-sync-tooltip" style="display:none;"><span class="tooltip-icon">?</span><span class="tooltip-text" id="invest-sync-tooltip-text"></span></span></div>
-                <div class="invest-banner-hero">
-                    <span class="invest-banner-amount" id="invest-banner-amount">$723,441</span>
-                </div>
-                <div class="invest-banner-fund" id="invest-banner-fund">in Total US Stock Market</div>
-                <div class="invest-banner-detail">
-                    <span id="invest-banner-gains">$563,441 in estimated gains</span>
-                    <span class="invest-banner-dot">&middot;</span>
-                    <span id="invest-banner-contribs">$160,000 contributed</span>
-                </div>
-                <div class="invest-banner-inputs" id="invest-banner-inputs" style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:0.25rem;"></div>
-                <div class="invest-banner-comparison" id="invest-banner-comparison"></div>
-            </div>
-
-            <!-- Disclaimer -->
-            <p class="invest-disclaimer" id="invest-disclaimer">
-                <span class="invest-disclaimer-icon">ⓘ</span>
-                Projections use historical averages and do not guarantee future results.
-                Actual returns vary year to year, including negative years. Not financial advice.
-            </p>
-
-            <!-- Stat Cards -->
-            <div class="invest-stat-cards">
-                <div class="card invest-stat-card">
-                    <div class="stat-card-label">What You Put In</div>
-                    <div class="stat-card-hero" id="invest-stat-contribs">$160,000</div>
-                    <div class="stat-card-sub">total contributed</div>
-                    <div class="stat-card-detail">
-                        <div id="invest-stat-initial-line"></div>
-                        <div id="invest-stat-monthly-line"></div>
-                    </div>
-                </div>
-                <div class="card invest-stat-card invest-stat-card--returns">
-                    <div class="stat-card-label" id="invest-stat-returns-label">Projected Returns — <span id="invest-stat-fund-name">Total US Stock Market</span></div>
-                    <div class="stat-card-hero invest-stat-multiple" id="invest-stat-multiple">4.5×</div>
-                    <div class="stat-card-sub">growth multiple</div>
-                    <div class="stat-card-detail">
-                        <div id="invest-stat-fv-line"></div>
-                        <div id="invest-stat-gains-line"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chart -->
-            <div class="card invest-chart-card">
-                <div class="invest-chart-header">
-                    <div>
-                        <h3 class="invest-chart-title">Investment Growth Over Time</h3>
-                        <p class="invest-chart-sub">Projected values based on historical average annual returns</p>
-                    </div>
-                    <span class="tooltip-wrap tip-right"><span class="tooltip-icon">?</span><span class="tooltip-text">Projected growth based on historical average annual returns. Actual year-to-year returns vary significantly — including negative years. Longer time horizons have historically reduced the impact of short-term volatility.</span></span>
-                </div>
-
-                <div class="invest-chart-wrapper">
-                    <canvas id="investChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Data Table -->
-            <div class="invest-table-section">
-                <button class="invest-table-toggle" id="invest-table-toggle" aria-expanded="false">
-                    <span>Show Year-by-Year Breakdown</span>
-                    <span class="chevron">▾</span>
-                </button>
-                <div class="invest-table-body" id="invest-table-body">
-                    <div class="data-table-wrap">
-                        <table class="data-table invest-data-table" id="invest-data-table">
-                            <!-- Generated by JS -->
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cross-link back to Mortgage -->
-            <div class="cross-link" id="invest-to-mortgage" onclick="switchSection('mortgage-calculator')">
-                <span>🏠</span>
-                <span>See how this fits into a home-buying decision — Mortgage vs. Invest Calculator</span>
-                <span class="cross-link-arrow">→</span>
-            </div>
-        </div>
-    </section>
 
     <footer class="footer">
         This calculator is for educational purposes only. Past market performance does not guarantee future results.
         Consult a financial advisor for personalized advice.
     </footer>
-
-    
-
-<!-- ══════════════════════════════════════════════════════════════════════ EMAIL CAPTURE ══════════════════════════════════════════════════════════════════════ -->
-    <div class="container medium">
-        <div class="email-capture-card" id="emailCapture" style="display: none;">
-            <h4>Save This Scenario</h4>
-            <p class="email-sub">Get a detailed breakdown sent to your inbox â€” plus tips on making smarter financial decisions.</p>
-            <form class="email-form" id="emailForm" onsubmit="event.preventDefault(); document.getElementById('emailSuccess').style.display='block'; return false;">
-                <div class="email-input-wrap">
-                    <input type="email" placeholder="you@example.com" required id="captureEmail">
-                    <button type="submit" class="btn-email-submit">Send My Results &rarr;</button>
-                </div>
-                <p class="email-fine-print">No spam. Unsubscribe anytime.</p>
-            </form>
-            <div class="email-success-msg" id="emailSuccess">&#10003; Check your inbox! Your scenario breakdown is on its way.</div>
-        </div>
-    </div>
 </section>
 
 <!-- ══════════════════════════════════════════════════════════════════════ CREATOR PLAQUE ══════════════════════════════════════════════════════════════════════ -->
-<div class="footer-rounded-div" data-scroll-section>
-    <div class="rounded-div-wrap"><div class="rounded-div"></div></div>
-</div>
-<section class="section footer-wrap footer-case-wrap theme-dark creator-plaque" data-scroll-section>
+<!-- TOOL BYLINE — slim, no creator plaque, no Focus Reader CTA. -->
+<section class="section tool-byline theme-dark" data-scroll-section>
     <div class="container medium">
-        <div class="row">
-            <div class="flex-col">
-                <h5>BUILT BY</h5>
-                <div class="stripe"></div>
-            </div>
-        </div>
-        <div class="row" style="padding-top: 1em;">
-            <div class="flex-col">
-                <div class="creator-identity">
-                    <div class="profile-picture"></div>
-                    <div class="creator-text">
-                        <h2><span>Michael</span> <span>Kalmykov</span></h2>
-                        <p style="color: var(--color-light); max-width: 500px; margin-top: 1em;">People-first UX Leader building calm, high-quality, distraction-free software. This calculator is one example. Focus Reader is the next.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="flex-col">
-                <div class="stripe"></div>
-                <div class="btn btn-normal" style="margin-top: 1.5em;">
-                    <a href="https://focusreader.app" target="_blank" class="btn-click magnetic" data-strength="25" data-strength-text="15">
-                        <div class="btn-fill"></div>
-                        <span class="btn-text">
-                            <span class="btn-text-inner change">Try Focus Reader &rarr;</span>
-                        </span>
-                    </a>
-                </div>
+        <div class="tool-byline-row">
+            <p class="tool-byline-author">
+                Built by <a href="../about.html">Michael Kalmykov</a>. Free to use, no signup required.
+            </p>
+            <div class="tool-byline-cross">
+                <span class="tool-byline-cross-label">More</span>
+                <a href="investment-calculator.html" data-barba-prevent="all">Investment Calculator &rarr;</a>
+                <a href="../tools.html">All tools</a>
+                <a href="../contact.html">Contact</a>
             </div>
         </div>
     </div>
@@ -968,6 +810,7 @@
         <script src="../cdn.jsdelivr.net/npm/vanilla-lazyload%4017.6.1/dist/lazyload.min.js"></script>
         
         <script src="../assets/js/locomotive-scroll.min.js"></script>        <script defer src="../assets/js/index-new.js"></script>    <script src="../assets/js/house-calculator.js"></script>
+    <script src="../assets/js/onboarding-wizard.js"></script>
 </body>
 
 

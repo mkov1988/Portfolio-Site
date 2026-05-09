@@ -1,4 +1,10 @@
 function initHouseCalculator() {
+        // Barba.js fires the once hook multiple times per page load (sync mode).
+        // Guard against re-entry by marking the calculator root element.
+        const calcRoot = document.getElementById('investment-calculator')
+                      || document.getElementById('mortgage-calculator');
+        if (calcRoot && calcRoot.dataset.hcReady === 'true') return;
+        if (calcRoot) calcRoot.dataset.hcReady = 'true';
 
         // ═══════════════════════════════════════════════
         // GLOBALS
@@ -87,51 +93,101 @@ function initHouseCalculator() {
             ['divTax', 'divTaxSlider'],
         ];
 
-        simplePairs.forEach(([numId, sliderId]) => {
-            const numEl = document.getElementById(numId);
-            const sliderEl = document.getElementById(sliderId);
-            numEl.addEventListener('input', () => {
-                sliderEl.value = numEl.value;
-                enforceConstraints(numId);
-                recalculate();
-            });
-            sliderEl.addEventListener('input', () => {
-                numEl.value = sliderEl.value;
-                enforceConstraints(sliderId);
-                recalculate();
-            });
-        });
-
-        // Scenario 2 Special Logic
+        // Scenario 2 element refs. Declared outside the mortgage-only guard so
+        // enforceConstraints() (defined below) can close over them. They're null
+        // on the investment-only page, but enforceConstraints is never invoked
+        // there (recalculate gates that), so the nulls are harmless.
         const s2DownBox = document.getElementById('s2Down');
         const s2InvestBox = document.getElementById('s2Invest');
         const s2Slider = document.getElementById('s2DownSlider');
-
         const s2DownInput = document.getElementById('s2DownInput');
         const s2InvestInput = document.getElementById('s2InvestInput');
 
-        [s2DownBox, s2InvestBox, s2Slider].forEach(el => {
-            el.addEventListener('input', (e) => {
-                enforceConstraints(e.target.id);
-                recalculate();
+        // Bind mortgage inputs only when the mortgage calculator is on the page.
+        if (document.getElementById('mortgage-calculator')) {
+            simplePairs.forEach(([numId, sliderId]) => {
+                const numEl = document.getElementById(numId);
+                const sliderEl = document.getElementById(sliderId);
+                numEl.addEventListener('input', (e) => {
+                    if (numId === 'homePrice' || numId === 'totalCash') {
+                        const originalPos = e.target.selectionStart;
+                        const originalLen = e.target.value.length;
+                        let raw = e.target.value.replace(/,/g, '');
+                        // Allow a single leading negative sign (though not really expected for price)
+                        // Actually just stripping non-digits is safer but we'll use parseFloat
+                        if (raw === '') {
+                            sliderEl.value = 0;
+                        } else {
+                            // Only allow digits
+                            raw = raw.replace(/\D/g, '');
+                            if (raw) {
+                                const parsed = parseFloat(raw) || 0;
+                                const formatted = parseInt(raw, 10).toLocaleString('en-US');
+                                e.target.value = formatted;
+                                sliderEl.value = parsed;
+                                const newLen = e.target.value.length;
+                                const diff = newLen - originalLen;
+                                const newPos = Math.max(0, originalPos + diff);
+                                e.target.setSelectionRange(newPos, newPos);
+                            } else {
+                                e.target.value = '';
+                                sliderEl.value = 0;
+                            }
+                        }
+                    } else {
+                        sliderEl.value = numEl.value;
+                    }
+                    enforceConstraints(numId);
+                    recalculate();
+                });
+                sliderEl.addEventListener('input', () => {
+                    if (numId === 'homePrice' || numId === 'totalCash') {
+                        numEl.value = parseFloat(sliderEl.value).toLocaleString('en-US');
+                    } else {
+                        // Round slider's float value to the step's decimal precision
+                        // so we don't display things like "1.2000000476837158".
+                        const stepStr = String(sliderEl.step || '1');
+                        const dot = stepStr.indexOf('.');
+                        const decimals = dot < 0 ? 0 : stepStr.length - dot - 1;
+                        numEl.value = parseFloat(sliderEl.value).toFixed(decimals).replace(/\.?0+$/, '') || '0';
+                    }
+                    enforceConstraints(sliderId);
+                    recalculate();
+                });
             });
-        });
 
-        // Editable Scenario 2 inputs — sync to hidden fields then enforce
-        s2DownInput.addEventListener('input', () => {
-            s2DownBox.value = s2DownInput.value;
-            enforceConstraints('s2Down');
-            recalculate();
-        });
-        s2InvestInput.addEventListener('input', () => {
-            s2InvestBox.value = s2InvestInput.value;
-            enforceConstraints('s2Invest');
-            recalculate();
-        });
+            [s2DownBox, s2InvestBox, s2Slider].forEach(el => {
+                el.addEventListener('input', (e) => {
+                    enforceConstraints(e.target.id);
+                    recalculate();
+                });
+            });
+
+            // Editable Scenario 2 inputs — sync to hidden fields then enforce.
+            // Inputs are type=text with comma formatting so 7-digit values fit; we
+            // strip non-digits before parsing and re-format after focus blur.
+            const s2BindCommaInput = (inputEl, hiddenEl, sourceId) => {
+                inputEl.addEventListener('input', () => {
+                    const raw = inputEl.value.replace(/\D/g, '');
+                    const originalPos = inputEl.selectionStart;
+                    const originalLen = inputEl.value.length;
+                    const formatted = raw ? parseInt(raw, 10).toLocaleString('en-US') : '';
+                    inputEl.value = formatted;
+                    hiddenEl.value = raw || '0';
+                    const diff = formatted.length - originalLen;
+                    const newPos = Math.max(0, originalPos + diff);
+                    try { inputEl.setSelectionRange(newPos, newPos); } catch (e) {}
+                    enforceConstraints(sourceId);
+                    recalculate();
+                });
+            };
+            s2BindCommaInput(s2DownInput, s2DownBox, 's2Down');
+            s2BindCommaInput(s2InvestInput, s2InvestBox, 's2Invest');
+        }
 
         function enforceConstraints(sourceId) {
-            const totalCash = parseFloat(document.getElementById('totalCash').value) || 0;
-            const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+            const totalCash = parseFloat(document.getElementById('totalCash').value.replace(/,/g, '')) || 0;
+            const homePrice = parseFloat(document.getElementById('homePrice').value.replace(/,/g, '')) || 0;
             const maxDown = Math.min(totalCash, homePrice);
 
             // Adjust slider max to the lesser of homePrice or totalCash
@@ -162,9 +218,15 @@ function initHouseCalculator() {
             s2Slider.value = s2D;
             s2InvestBox.value = s2I;
 
-            // Update editable inputs with raw numeric values
-            if (s2DownInput && document.activeElement !== s2DownInput) s2DownInput.value = s2D;
-            if (s2InvestInput && document.activeElement !== s2InvestInput) s2InvestInput.value = s2I;
+            // The slider's max changed above, so its fill % needs to be recomputed
+            // from the new (value, min, max) tuple — otherwise the purple track
+            // can extend past the thumb when totalCash/homePrice are adjusted.
+            updateSliderFill(s2Slider);
+
+            // Update editable inputs with comma-formatted numeric values.
+            const fmtInt = (n) => Math.round(n).toLocaleString('en-US');
+            if (s2DownInput && document.activeElement !== s2DownInput) s2DownInput.value = fmtInt(s2D);
+            if (s2InvestInput && document.activeElement !== s2InvestInput) s2InvestInput.value = fmtInt(s2I);
 
             // Enforce S1 Max Down
             const s1D = Math.min(homePrice, totalCash);
@@ -202,11 +264,13 @@ function initHouseCalculator() {
         // ═══════════════════════════════════════════════
         // ADVANCED TOGGLE
         // ═══════════════════════════════════════════════
-        function toggleAdvanced() {
-            const toggle = document.getElementById('advancedToggle');
-            const body = document.getElementById('advancedBody');
-            toggle.classList.toggle('open');
-            body.classList.toggle('open');
+        const advancedToggleEl = document.getElementById('advancedToggle');
+        const advancedBodyEl = document.getElementById('advancedBody');
+        if (advancedToggleEl) {
+            advancedToggleEl.addEventListener('click', () => {
+                advancedToggleEl.classList.toggle('open');
+                advancedBodyEl.classList.toggle('open');
+            });
         }
 
         // ═══════════════════════════════════════════════
@@ -224,8 +288,8 @@ function initHouseCalculator() {
         // ═══════════════════════════════════════════════
         function getInputs() {
             return {
-                homePrice: parseFloat(document.getElementById('homePrice').value) || 0,
-                totalCash: parseFloat(document.getElementById('totalCash').value) || 0,
+                homePrice: parseFloat(document.getElementById('homePrice').value.replace(/,/g, '')) || 0,
+                totalCash: parseFloat(document.getElementById('totalCash').value.replace(/,/g, '')) || 0,
                 s1Down: parseFloat(document.getElementById('s1Down').value) || 0,
                 s2Down: parseFloat(document.getElementById('s2Down').value) || 0,
                 mortgageRate: (parseFloat(document.getElementById('mortgageRate').value) || 0) / 100,
@@ -346,6 +410,9 @@ function initHouseCalculator() {
             const inputs = getInputs();
             const model = runModel(inputs);
             const finalYear = model.years[model.years.length - 1];
+            // Stash latest snapshot so the email-capture submit handler can grab
+            // exactly what the user is seeing without recomputing.
+            window.__hcLastSnapshot = { inputs, model, capturedAt: Date.now() };
 
             // Dynamic Title
             const advAmount = Math.abs(finalYear.advantage);
@@ -450,8 +517,11 @@ function initHouseCalculator() {
 
             // How It Works
             document.getElementById('hiwBody').innerHTML =
-                `Both scenarios invest! Scenario 1 has less upfront to invest but <strong>${fmt(model.s1Investment)}/month</strong> available. ` +
-                `Scenario 2 starts with <strong>${fmt(model.s2StartVTSAX)}</strong> to invest but only <strong>${fmt(model.s2Investment)}/month</strong> available.`;
+                `<p class="hiw-lead">Both scenarios cost the same each month — they just invest in different ways.</p>` +
+                `<ul class="hiw-list">` +
+                  `<li><strong>Scenario 1</strong> starts with <strong>$0</strong> invested, then puts <strong>${fmt(model.s1Investment)}/month</strong> into the market.</li>` +
+                  `<li><strong>Scenario 2</strong> starts with <strong>${fmt(model.s2StartVTSAX)}</strong> already invested, then adds <strong>${fmt(model.s2Investment)}/month</strong>.</li>` +
+                `</ul>`;
 
             // Charts
             updateCharts(model);
@@ -701,20 +771,23 @@ function initHouseCalculator() {
             insurance: 1200, maintenance: 1, divYield: 1.8, divTax: 25,
         };
 
-        document.getElementById('mortgageResetBtn').addEventListener('click', () => {
-            for (const [key, val] of Object.entries(MORTGAGE_DEFAULTS)) {
-                const numEl = document.getElementById(key);
-                const sliderEl = document.getElementById(key + 'Slider');
-                if (numEl) numEl.value = val;
-                if (sliderEl) sliderEl.value = val;
-            }
-            // Reset Scenario 2 slider
-            document.getElementById('s2DownSlider').value = 150000;
-            document.getElementById('s2Down').value = 150000;
-            document.getElementById('s2Invest').value = 400000;
-            enforceConstraints('init');
-            recalculate();
-        });
+        const mortgageResetBtn = document.getElementById('mortgageResetBtn');
+        if (mortgageResetBtn) {
+            mortgageResetBtn.addEventListener('click', () => {
+                for (const [key, val] of Object.entries(MORTGAGE_DEFAULTS)) {
+                    const numEl = document.getElementById(key);
+                    const sliderEl = document.getElementById(key + 'Slider');
+                    if (numEl) numEl.value = val;
+                    if (sliderEl) sliderEl.value = val;
+                }
+                // Reset Scenario 2 slider
+                document.getElementById('s2DownSlider').value = 150000;
+                document.getElementById('s2Down').value = 150000;
+                document.getElementById('s2Invest').value = 400000;
+                enforceConstraints('init');
+                recalculate();
+            });
+        }
 
         // ═══════════════════════════════════════════════
         // NUMBER FORMATTING (comma display)
@@ -853,7 +926,7 @@ function initHouseCalculator() {
         }
 
         function animateValue(el, start, end, duration, formatter) {
-            if (prefersReducedMotion || duration === 0) {
+            if (prefersReducedMotion || duration === 0 || document.hidden) {
                 el.textContent = formatter ? formatter(end) : end;
                 return;
             }
@@ -1640,6 +1713,11 @@ function initHouseCalculator() {
 
         function initSectionNav() {
             const navBtns = document.querySelectorAll('.section-nav-btn');
+            // Single-calc pages (house-calculator.html, investment-calculator.html)
+            // have no toggle UI; bail early so we don't try to hide siblings that
+            // aren't on the page.
+            if (navBtns.length === 0) return;
+
             navBtns.forEach(btn => {
                 btn.addEventListener('click', () => switchSection(btn.dataset.section));
             });
@@ -1647,8 +1725,8 @@ function initHouseCalculator() {
             // Start with investment section hidden
             const dividerEl = document.querySelector('.section-divider');
             const investEl = document.getElementById('investment-calculator');
-            dividerEl.classList.add('section-hidden');
-            investEl.classList.add('section-hidden');
+            if (dividerEl) dividerEl.classList.add('section-hidden');
+            if (investEl) investEl.classList.add('section-hidden');
         }
 
         // ── Update invest chart colors on theme toggle ──
@@ -1692,35 +1770,190 @@ function initHouseCalculator() {
         }
 
         // ═══════════════════════════════════════════════
-        // INIT
+        // INIT — gate by which calculator is on the page
         // ═══════════════════════════════════════════════
-        initCharts();
-        updateChartColors(); // Apply theme colors to charts immediately
-        recalculate();
-        applyChartAccessibility(); // Dashed lines + distinct markers for colorblind accessibility
-        initInvestmentCalculator();
+        const hasMortgage = !!document.getElementById('mortgage-calculator');
+        const hasInvestment = !!document.getElementById('investment-calculator');
 
-    // Theme + email-capture hooks live below. Theme toggle is wired via the
-    // existing #themeToggle button (see THEME SETUP near the top of this file);
-    // we do not create a duplicate here.
-
-    // Email capture hook
-    const emailCapture = document.getElementById('emailCapture');
-    if (emailCapture) {
-        if (typeof recalculate === 'function') {
-            const origRecalc = recalculate;
-            recalculate = function() {
-                origRecalc();
-                emailCapture.style.display = 'block';
-            };
+        if (hasMortgage) {
+            initCharts();
+            recalculate();
+            applyChartAccessibility(); // Dashed lines + distinct markers for colorblind accessibility
         }
-        if (typeof updateInvestment === 'function') {
-            const origUpdate = updateInvestment;
-            updateInvestment = function() {
-                origUpdate();
-                emailCapture.style.display = 'block';
-            };
+        if (hasInvestment) {
+            initInvestmentCalculator();
         }
-    }
+        updateChartColors(); // Always safe — internal null-checks on chart refs
 
+    // Theme toggle is wired via the existing #themeToggle button (see THEME SETUP
+    // near the top of this file); we do not create a duplicate here.
+
+    initEmailCapture();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EMAIL CAPTURE — submit handler with state machine
+// ═══════════════════════════════════════════════════════════════════════════
+function initEmailCapture() {
+    const card = document.getElementById('emailCapture');
+    if (!card) return;
+    const form = document.getElementById('emailForm');
+    const emailInput = document.getElementById('captureEmail');
+    const honeypot = document.getElementById('hc_company');
+    const submitBtn = document.getElementById('sendEmailBtn');
+    const errorMsg = document.getElementById('emailErrorMsg');
+    if (!form || !emailInput || !submitBtn) return;
+
+    // Endpoint — Cloudflare Worker. Override at runtime via window.__HC_EMAIL_ENDPOINT
+    // for local testing (see server/email-worker/README.md).
+    const ENDPOINT = window.__HC_EMAIL_ENDPOINT
+        || 'https://email.mkalmykov.com/api/house-scenario';
+
+    // RFC-5322-lite: good enough to catch typos without false positives.
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    const setState = (state, errText) => {
+        card.dataset.state = state;
+        emailInput.disabled = (state === 'sending' || state === 'success');
+        submitBtn.disabled = (state === 'sending' || state === 'success');
+        if (state === 'error' && errText && errorMsg) {
+            errorMsg.textContent = errText;
+        }
+    };
+
+    const buildPayload = () => {
+        const snap = window.__hcLastSnapshot;
+        if (!snap) return null;
+        const { inputs, model } = snap;
+        const finalYear = model.years[model.years.length - 1];
+        const s2Wins = finalYear.advantage >= 0;
+        const advantage = Math.abs(finalYear.advantage);
+        const totalInterestS1 = (model.s1PI * inputs.loanTerm * 12) - model.s1Loan;
+        const totalInterestS2 = (model.s2PI * inputs.loanTerm * 12) - model.s2Loan;
+        const today = new Date();
+        const payoff = new Date(today.getFullYear() + inputs.loanTerm, today.getMonth(), today.getDate());
+
+        return {
+            meta: {
+                source: 'house-calculator',
+                capturedAt: new Date(snap.capturedAt).toISOString(),
+                pageUrl: window.location.href,
+            },
+            inputs: {
+                homePrice: inputs.homePrice,
+                totalCash: inputs.totalCash,
+                loanTermYears: inputs.loanTerm,
+                mortgageRatePct: +(inputs.mortgageRate * 100).toFixed(3),
+                grossReturnPct: +(inputs.grossReturn * 100).toFixed(3),
+                propTaxPct: +(inputs.propTax * 100).toFixed(3),
+                annualInsurance: inputs.insurance,
+                maintenancePct: +(inputs.maintenance * 100).toFixed(3),
+                divYieldPct: +(inputs.divYield * 100).toFixed(3),
+                divTaxPct: +(inputs.divTax * 100).toFixed(3),
+                s1: {
+                    label: 'Max Down Payment',
+                    downPayment: inputs.s1Down,
+                    downPaymentPct: inputs.homePrice > 0 ? +(inputs.s1Down / inputs.homePrice * 100).toFixed(2) : 0,
+                    loanAmount: model.s1Loan,
+                },
+                s2: {
+                    label: 'Min Down + Invest the Rest',
+                    downPayment: inputs.s2Down,
+                    downPaymentPct: inputs.homePrice > 0 ? +(inputs.s2Down / inputs.homePrice * 100).toFixed(2) : 0,
+                    loanAmount: model.s2Loan,
+                    upfrontInvested: model.s2StartVTSAX,
+                },
+            },
+            outputs: {
+                netReturnPct: +(model.netReturn * 100).toFixed(3),
+                monthly: {
+                    propertyTax: Math.round(model.monthlyPropTax),
+                    insurance: Math.round(model.monthlyIns),
+                    maintenance: Math.round(model.monthlyMnt),
+                    s1: {
+                        principalAndInterest: Math.round(model.s1PI),
+                        housingTotal: Math.round(model.s1Housing),
+                        invested: Math.round(model.s1Investment),
+                        total: Math.round(model.s1Housing + model.s1Investment),
+                    },
+                    s2: {
+                        principalAndInterest: Math.round(model.s2PI),
+                        housingTotal: Math.round(model.s2Housing),
+                        invested: Math.round(model.s2Investment),
+                        total: Math.round(model.s2Housing + model.s2Investment),
+                    },
+                },
+                lifetimeInterest: {
+                    s1: Math.round(totalInterestS1),
+                    s2: Math.round(totalInterestS2),
+                },
+                payoffDate: payoff.toISOString().slice(0, 10),
+                finalYear: {
+                    year: finalYear.year,
+                    s1NetWealth: Math.round(finalYear.s1Net),
+                    s2NetWealth: Math.round(finalYear.s2Net),
+                    s1Equity: Math.round(inputs.homePrice - finalYear.s1Loan),
+                    s2Equity: Math.round(inputs.homePrice - finalYear.s2Loan),
+                    s1Invested: Math.round(finalYear.s1VTSAX),
+                    s2Invested: Math.round(finalYear.s2VTSAX),
+                    winner: s2Wins ? 's2' : 's1',
+                    advantageDollars: Math.round(advantage),
+                },
+            },
+        };
+    };
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (card.dataset.state === 'sending' || card.dataset.state === 'success') return;
+
+        const email = emailInput.value.trim();
+        if (!EMAIL_RE.test(email)) {
+            setState('error', 'That doesn’t look like a valid email. Mind double-checking?');
+            emailInput.focus();
+            return;
+        }
+
+        // Honeypot tripped — silently no-op so bots think they succeeded.
+        if (honeypot && honeypot.value) {
+            setState('success');
+            return;
+        }
+
+        const payload = buildPayload();
+        if (!payload) {
+            setState('error', 'Couldn’t read your scenario. Try changing a slider, then resend.');
+            return;
+        }
+
+        setState('sending');
+        try {
+            const resp = await fetch(ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, payload, hp: honeypot ? honeypot.value : '' }),
+                keepalive: true, // survive page nav while in flight
+            });
+            if (resp.status === 429) {
+                setState('error', 'Too many sends from this network. Try again in a few minutes.');
+                return;
+            }
+            if (!resp.ok) {
+                let detail = '';
+                try { detail = (await resp.json()).error || ''; } catch (_) {}
+                setState('error', detail || 'Couldn’t send right now — please try again in a moment.');
+                return;
+            }
+            setState('success');
+        } catch (err) {
+            setState('error', 'Network hiccup — check your connection and try again.');
+        }
+    });
+
+    // Live-validate to clear the error state once the user fixes the email.
+    emailInput.addEventListener('input', () => {
+        if (card.dataset.state === 'error' && EMAIL_RE.test(emailInput.value.trim())) {
+            setState('idle');
+        }
+    });
 }

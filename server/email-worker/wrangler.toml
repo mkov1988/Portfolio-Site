@@ -1,0 +1,25 @@
+name = "house-calc-email"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+PORTFOLIO_URL = "https://www.mkalmykov.com"
+FOCUS_READER_URL = "https://www.mkalmykov.com/tools/focus-reader.html"
+ALLOWED_ORIGINS = "https://www.mkalmykov.com,https://mkalmykov.com,http://localhost:8080,http://localhost:4321,http://127.0.0.1:8080"
+
+# ── KV namespace for IP/email rate limiting ──
+# Create once: `wrangler kv namespace create RATE_LIMIT`
+# Then paste the returned id below and uncomment.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "REPLACE_ME"
+
+# ── Custom domain (optional but recommended) ──
+# After deploy: bind email.mkalmykov.com to this worker via the Cloudflare dashboard
+# (Workers & Pages → house-calc-email → Settings → Triggers → Custom Domain).
+# The frontend in assets/js/house-calculator.js posts to https://email.mkalmykov.com/api/house-scenario.
+
+# Secrets — DO NOT put these in vars. Set with:
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put FROM_EMAIL    # e.g. "Michael <reports@mkalmykov.com>"
+#   wrangler secret put REPLY_TO      # optional, e.g. "michael.kalmykov.88@gmail.com"
