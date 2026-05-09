@@ -241,7 +241,7 @@
   <div class="container medium">
     <div class="tools-index-grid">
 
-      <!-- House Calculator (active, the only real tool today) -->
+      <!-- House Calculator -->
       <a href="tools/house-calculator.html" class="tool-card" data-barba-prevent="all">
         <div class="tool-card-preview tool-card-preview-calc">
           <!-- Decorative chart-line motif as an inline SVG. -->
@@ -269,22 +269,64 @@
         </div>
       </a>
 
-      <!-- In the lab: Focus Reader (coming soon, distinct treatment) -->
-      <div class="tool-card tool-card-lab" aria-label="Coming soon — Focus Reader">
-        <div class="tool-card-lab-badge">In the lab</div>
+      <!-- Investment Calculator (coming soon) -->
+      <div class="tool-card tool-card-cooking" aria-disabled="true" role="group" aria-label="Investment Calculator — coming soon">
+        <span class="tool-card-cooking-badge">🧪 Cooking up in the lab</span>
+        <div class="tool-card-preview tool-card-preview-invest">
+          <!-- Compound-growth curve motif. -->
+          <svg viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="investGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines for "chart" feel -->
+            <g stroke="rgba(255,255,255,0.06)" stroke-width="1">
+              <line x1="0" y1="50" x2="320" y2="50"/>
+              <line x1="0" y1="100" x2="320" y2="100"/>
+              <line x1="0" y1="150" x2="320" y2="150"/>
+            </g>
+            <!-- Compound-growth curve filled -->
+            <path d="M0,185 C60,182 120,170 180,140 C220,118 260,80 320,25 L320,200 L0,200 Z" fill="url(#investGrad)"/>
+            <!-- Curve stroke -->
+            <path d="M0,185 C60,182 120,170 180,140 C220,118 260,80 320,25" fill="none" stroke="#10b981" stroke-width="2.5"/>
+            <!-- Year markers -->
+            <g fill="#10b981">
+              <circle cx="60" cy="182" r="3"/>
+              <circle cx="160" cy="155" r="3"/>
+              <circle cx="260" cy="80" r="3"/>
+            </g>
+          </svg>
+        </div>
+        <div class="tool-card-body">
+          <h3 class="tool-card-title">Investment Calculator</h3>
+          <p class="tool-card-prop">Project how an initial investment plus monthly contributions compound across different fund types over time. Tweak fees and time horizon and watch the chart move.</p>
+          <span class="tool-card-cta tool-card-cta-cooking">Coming soon</span>
+        </div>
+      </div>
+
+      <!-- Tool 3: Focus Reader (coming soon) -->
+      <div class="tool-card tool-card-cooking" aria-disabled="true" role="group" aria-label="Focus Reader — coming soon">
+        <span class="tool-card-cooking-badge">🧪 Cooking up in the lab</span>
         <div class="tool-card-preview tool-card-preview-focus">
           <svg viewBox="0 0 320 200" aria-hidden="true" focusable="false">
-            <rect x="60" y="55"  width="200" height="6" rx="3" fill="rgba(255,255,255,0.3)"/>
-            <rect x="60" y="75"  width="200" height="6" rx="3" fill="rgba(255,255,255,0.18)"/>
-            <rect x="60" y="95"  width="160" height="6" rx="3" fill="rgba(255,255,255,0.5)"/>
-            <rect x="60" y="115" width="200" height="6" rx="3" fill="rgba(255,255,255,0.18)"/>
-            <rect x="60" y="135" width="180" height="6" rx="3" fill="rgba(255,255,255,0.18)"/>
+            <!-- RSVP guide bars -->
+            <rect x="40" y="60"  width="240" height="3" fill="rgba(255,255,255,0.25)"/>
+            <rect x="40" y="137" width="240" height="3" fill="rgba(255,255,255,0.25)"/>
+            <!-- Center vertical guide -->
+            <rect x="158.5" y="63"  width="3" height="22" fill="rgba(255,255,255,0.35)"/>
+            <rect x="158.5" y="115" width="3" height="22" fill="rgba(255,255,255,0.35)"/>
+            <!-- Word "Focus" with focal "o" highlighted -->
+            <text x="160" y="110" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="500">
+              <tspan fill="rgba(255,255,255,0.85)">F</tspan><tspan fill="#ef4444">o</tspan><tspan fill="rgba(255,255,255,0.85)">cus</tspan>
+            </text>
           </svg>
         </div>
         <div class="tool-card-body">
           <h3 class="tool-card-title">Focus Reader</h3>
-          <p class="tool-card-prop">A calm, distraction-free reader for long-form articles. Currently in development &mdash; targeting late 2026.</p>
-          <span class="tool-card-cta tool-card-cta-soon">Coming soon</span>
+          <p class="tool-card-prop">Speed read anything. Five reading modes from classic single-word RSVP to a paragraph view that highlights the active word as you go. Public-domain samples included.</p>
+          <span class="tool-card-cta tool-card-cta-cooking">Coming soon</span>
         </div>
       </div>
 
