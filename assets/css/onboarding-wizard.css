@@ -1,0 +1,513 @@
+/* ═══════════════════════════════════════════════
+   ONBOARDING WIZARD — OVERLAY & BACKDROP
+   ═══════════════════════════════════════════════ */
+.wizard-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  background: rgba(17, 24, 39, 0.55);
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 1.5rem;
+}
+
+.wizard-overlay.visible {
+  opacity: 1;
+}
+
+.wizard-overlay.dismissing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL CARD
+   ═══════════════════════════════════════════════ */
+.wizard-modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: rgba(30, 32, 38, 0.82);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  padding: 3rem 2.5rem 2.5rem;
+  transform: translateY(24px) scale(0.97);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s ease;
+  overflow: hidden;
+}
+
+.wizard-overlay.visible .wizard-modal {
+  transform: translateY(0) scale(1);
+}
+
+.wizard-overlay.dismissing .wizard-modal {
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+}
+
+/* Subtle gradient glow behind modal */
+.wizard-modal::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -30%;
+  width: 160%;
+  height: 160%;
+  background: radial-gradient(ellipse at 50% 0%,
+      rgba(99, 102, 241, 0.12) 0%,
+      transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wizard-modal>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════════
+   CLOSE BUTTON
+   ═══════════════════════════════════════════════ */
+.wizard-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.wizard-close:hover,
+.wizard-close:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+.wizard-close:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.7);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   STEP CONTAINER & TRANSITIONS
+   ═══════════════════════════════════════════════ */
+.wizard-steps-track {
+  position: relative;
+  overflow: hidden;
+  /* Height will be set dynamically by JS */
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wizard-step {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.4s ease,
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.wizard-step.active {
+  position: relative;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.wizard-step.exit-left {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+/* ═══════════════════════════════════════════════
+   HEADINGS & CONTENT
+   ═══════════════════════════════════════════════ */
+.wizard-step-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(139, 92, 246, 0.9);
+  margin-bottom: 0.75rem;
+}
+
+.wizard-heading {
+  font-family: 'Michael Sans', 'Inter', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #f9fafb;
+  margin-bottom: 2rem;
+  letter-spacing: -0.3px;
+}
+
+/* ═══════════════════════════════════════════════
+   CURRENCY INPUT
+   ═══════════════════════════════════════════════ */
+.wizard-input-wrap {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.wizard-currency-prefix {
+  position: absolute;
+  left: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.wizard-input-wrap:focus-within .wizard-currency-prefix {
+  color: rgba(139, 92, 246, 0.8);
+}
+
+.wizard-input {
+  width: 100%;
+  padding: 1.15rem 1.25rem 1.15rem 2.75rem;
+  font-family: 'Michael Sans', 'Inter', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #f9fafb;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  outline: none;
+  transition: border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+  -moz-appearance: textfield;
+}
+
+.wizard-input::-webkit-outer-spin-button,
+.wizard-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.wizard-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+}
+
+.wizard-input:focus {
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12),
+    0 0 20px rgba(139, 92, 246, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════ */
+.wizard-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.wizard-btn-primary {
+  flex: 1;
+  padding: 0.95rem 2rem;
+  font-family: 'Michael Sans', 'Inter', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  border: none;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.wizard-btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.wizard-btn-primary:hover::before {
+  opacity: 1;
+}
+
+.wizard-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+}
+
+.wizard-btn-primary:active {
+  transform: translateY(0);
+}
+
+.wizard-btn-primary:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.7);
+  outline-offset: 3px;
+}
+
+.wizard-btn-primary span {
+  position: relative;
+  z-index: 1;
+}
+
+.wizard-btn-back {
+  padding: 0.75rem 1rem;
+  font-family: 'Michael Sans', 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.wizard-btn-back:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wizard-btn-back:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.7);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   PHANTOM STAGING — VISUAL HANDOFF
+   ═══════════════════════════════════════════════ */
+
+/* Staging container — centers phantom cards on screen */
+.wizard-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+/* Each phantom — a compact card that mirrors the sidebar input-group look */
+.wizard-phantom {
+  background: rgba(30, 32, 38, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  min-width: 220px;
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 250ms ease,
+    transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.wizard-phantom--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.wizard-phantom--deploying {
+  /* position goes to absolute so FLIP transform works cleanly */
+  position: fixed;
+  z-index: 9999;
+}
+
+.wizard-phantom__label {
+  font-family: 'Michael Sans', 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.3px;
+  margin-bottom: 0.2rem;
+}
+
+.wizard-phantom__value {
+  font-family: 'Michael Sans', 'Inter', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f9fafb;
+  letter-spacing: -0.3px;
+}
+
+/* ═══════════════════════════════════════════════
+   LANDING GLOW — SIDEBAR INPUT HIGHLIGHT
+   ═══════════════════════════════════════════════ */
+@keyframes wizard-group-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5);
+  }
+  25% {
+    box-shadow: 0 0 0 5px rgba(139, 92, 246, 0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.wizard-highlight-group {
+  animation: wizard-group-glow 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  border-radius: var(--radius-sm, 0.4rem);
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS DOTS
+   ═══════════════════════════════════════════════ */
+.wizard-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.wizard-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wizard-dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: rgba(139, 92, 246, 0.8);
+}
+
+.wizard-progress-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: 0.75rem;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════
+   STAGING TRAY — collected values inside modal
+   ═══════════════════════════════════════════════ */
+.wizard-staging {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 350ms cubic-bezier(0.4, 0, 0.2, 1),
+              margin-top 350ms ease,
+              padding-top 350ms ease;
+}
+
+/* Expand the tray when it has children */
+.wizard-staging:has(.wizard-phantom) {
+  max-height: 200px;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Phantoms inside the staging tray stack full-width */
+.wizard-staging .wizard-phantom {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE DIM — SPOTLIGHT EFFECT DURING DEPLOY
+   ═══════════════════════════════════════════════ */
+.wizard-page-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  background: rgba(10, 12, 18, 0.65);
+  opacity: 0;
+  transition: opacity 800ms ease;
+  pointer-events: none;
+}
+
+.wizard-page-dim.active {
+  opacity: 1;
+}
+
+.wizard-page-dim.lifting {
+  opacity: 0;
+  transition: opacity 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sidebar inputs rise above the dim */
+.wizard-spotlight {
+  position: relative;
+  z-index: 9995;
+}
+
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .wizard-modal {
+    padding: 2.5rem 1.5rem 2rem;
+    border-radius: 1rem;
+  }
+
+  .wizard-heading {
+    font-size: 1.3rem;
+  }
+
+  .wizard-input {
+    font-size: 1.4rem;
+    padding: 1rem 1rem 1rem 2.5rem;
+  }
+
+  .wizard-currency-prefix {
+    font-size: 1.3rem;
+    left: 1rem;
+  }
+
+  .wizard-btn-primary {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
