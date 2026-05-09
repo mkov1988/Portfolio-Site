@@ -296,8 +296,8 @@
             flex-shrink: 0;
         }
 
-        .input-row input[type="number"] {
-            width: 7rem;
+        .input-row input {
+            width: 145px;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             padding: 0.65rem 0.75rem;
@@ -312,7 +312,7 @@
             transition: border-color 0.15s;
         }
 
-        .input-row input[type="number"]:focus {
+        .input-row input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
@@ -923,6 +923,22 @@
 
         .how-it-works .hiw-body strong {
             color: var(--text);
+        }
+
+        .how-it-works .hiw-body .hiw-lead {
+            margin: 0 0 0.6rem 0;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .how-it-works .hiw-body .hiw-list {
+            margin: 0;
+            padding-left: 1.1rem;
+            list-style: disc;
+        }
+
+        .how-it-works .hiw-body .hiw-list li {
+            margin: 0.25rem 0;
         }
 
         /* ═══════════════════════════════════════════════
