@@ -400,9 +400,9 @@ function initPageTransitions() {
       name: 'default',
       once(data) {
         // do something once on the initial page load
-        initSmoothScroll(data.next.container);
-        initScript();
-        initCookieViews();
+        try { initSmoothScroll(data.next.container); } catch(e) {}
+        try { initScript(); } catch(e) {}
+        try { initCookieViews(); } catch(e) {}
         initLoader();
       },
       async leave(data) {
@@ -441,21 +441,23 @@ function initPageTransitions() {
     {
       name: 'to-tools',
       to: {
-        namespace: ['tools']
+        namespace: ['tools', 'tools-index']
       },
       once(data) {
-        initSmoothScroll(data.next.container);
-        initScript();
-        initCookieViews();
+        try { initSmoothScroll(data.next.container); } catch(e) {}
+        try { initScript(); } catch(e) {}
+        try { initCookieViews(); } catch(e) {}
         initLoader();
         if (typeof initHouseCalculator === 'function') initHouseCalculator();
+        if (typeof initFocusReader === 'function') initFocusReader();
       },
       async beforeEnter(data) {
         ScrollTrigger.getAll().forEach(t => t.kill());
         scroll.destroy();
         initSmoothScroll(data.next.container);
-        initScript(); 
+        initScript();
         if (typeof initHouseCalculator === 'function') initHouseCalculator();
+        if (typeof initFocusReader === 'function') initFocusReader();
       }
     }]
   });
