@@ -416,12 +416,16 @@ function initHouseCalculator() {
 
             // Dynamic Title
             const advAmount = Math.abs(finalYear.advantage);
+            // A tie is when the gap rounds to $0 at the displayed precision —
+            // neither strategy should be crowned in that case.
+            const isTie = Math.round(advAmount) === 0;
             const s2WinsCheck = finalYear.advantage >= 0;
             const winnerStrategy = s2WinsCheck
                 ? 'minimized the down payment'
                 : 'put the max down';
-            document.getElementById('bottomLineTitle').textContent =
-                `At year ${model.loanTerm}, you'd have ${fmt(advAmount)} more if you ${winnerStrategy}.`;
+            document.getElementById('bottomLineTitle').textContent = isTie
+                ? `At year ${model.loanTerm}, both strategies leave you with the same net wealth.`
+                : `At year ${model.loanTerm}, you'd have ${fmt(advAmount)} more if you ${winnerStrategy}.`;
 
             // Scenario notes
             const s1Pct = inputs.homePrice > 0 ? ((inputs.s1Down / inputs.homePrice) * 100).toFixed(1) : '0';
@@ -447,8 +451,14 @@ function initHouseCalculator() {
             const s1ResultEl = document.getElementById('s1Result');
             const s2ResultEl = document.getElementById('s2Result');
 
-            s1ResultEl.className = s2Wins ? 'scenario-result baseline' : 'scenario-result pro-tier winner';
-            s2ResultEl.className = s2Wins ? 'scenario-result pro-tier winner' : 'scenario-result baseline';
+            if (isTie) {
+                // No winner — both panels render in the neutral baseline state.
+                s1ResultEl.className = 'scenario-result baseline';
+                s2ResultEl.className = 'scenario-result baseline';
+            } else {
+                s1ResultEl.className = s2Wins ? 'scenario-result baseline' : 'scenario-result pro-tier winner';
+                s2ResultEl.className = s2Wins ? 'scenario-result pro-tier winner' : 'scenario-result baseline';
+            }
 
             // HTML constructors for Footers and Badges
             const pctWinS1 = finalYear.s2Net > 0 ? ((advAbs / finalYear.s2Net) * 100).toFixed(1) : '0';
@@ -472,6 +482,14 @@ function initHouseCalculator() {
 
             const badgeHTML = `<div class="winner-badge" id="winnerBadge">+${fmt(advAbs)} ahead</div>`;
 
+            const tieFooterHTML = `
+                <div class="result-footer footer-baseline">
+                    <div class="footer-title">EVEN</div>
+                    <div class="footer-value">$0</div>
+                    <div class="footer-sub">Both strategies end at the same net wealth</div>
+                </div>
+            `;
+
             // Reset badges & Clear old static footers
             const existingBadges = document.querySelectorAll('.winner-badge');
             existingBadges.forEach(b => b.remove());
@@ -481,7 +499,11 @@ function initHouseCalculator() {
             if (existingS2Footer) existingS2Footer.remove();
 
             // Inject new dynamic states
-            if (s2Wins) {
+            if (isTie) {
+                // No badge, no hero footer — just a neutral "EVEN" footer on both.
+                s1ResultEl.insertAdjacentHTML('beforeend', tieFooterHTML);
+                s2ResultEl.insertAdjacentHTML('beforeend', tieFooterHTML);
+            } else if (s2Wins) {
                 s2ResultEl.insertAdjacentHTML('afterbegin', badgeHTML);
                 s1ResultEl.insertAdjacentHTML('beforeend', baselineFooterHTML(advAbs));
                 s2ResultEl.insertAdjacentHTML('beforeend', heroFooterHTML(advAbs, pctWinS2, 'Scenario 2'));
