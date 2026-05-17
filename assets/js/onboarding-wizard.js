@@ -394,13 +394,14 @@
         deployToSidebar(phantomHome, targetHomeGroup);
         deployToSidebar(phantomCash, targetCashGroup);
 
-        // As phantoms approach their targets, start lifting the dim
+        // Phantoms land at ~850ms — hold the dim for ~1s after that
+        // so users can clearly see their two values in their new home.
         setTimeout(() => {
           pageDim.classList.remove('active');
           pageDim.classList.add('lifting');
-        }, 400);
+        }, 1850);
 
-        // Cleanup after everything settles
+        // Cleanup after the dim has fully lifted
         setTimeout(() => {
           if (phantomHome) phantomHome.remove();
           if (phantomCash) phantomCash.remove();
@@ -409,7 +410,7 @@
           if (targetCashGroup) targetCashGroup.classList.remove('wizard-spotlight');
           applyLandingGlow(targetHomeGroup);
           applyLandingGlow(targetCashGroup);
-        }, 1000);
+        }, 2750);
       }, 300);
     }, 500);
   }
