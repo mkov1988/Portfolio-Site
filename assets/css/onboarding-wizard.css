@@ -455,31 +455,30 @@
 }
 
 /* ═══════════════════════════════════════════════
-   PAGE DIM — SPOTLIGHT EFFECT DURING DEPLOY
+   PAGE DIM — BOX-SHADOW SPOTLIGHT DURING DEPLOY
+   The element is a transparent "hole" positioned over the two target
+   input groups; its huge box-shadow darkens the rest of the page.
+   Box-shadow is unaffected by the page's stacking contexts
+   (.main-wrap has will-change:transform), so the two inputs stay lit
+   while everything else dims — which a plain overlay cannot guarantee.
    ═══════════════════════════════════════════════ */
 .wizard-page-dim {
   position: fixed;
-  inset: 0;
   z-index: 9990;
-  background: rgba(10, 12, 18, 0.65);
-  opacity: 0;
-  transition: opacity 800ms ease;
+  background: transparent;
+  border-radius: 0.55rem;
+  box-shadow: 0 0 0 100vmax rgba(10, 12, 18, 0);
+  transition: box-shadow 800ms ease;
   pointer-events: none;
 }
 
 .wizard-page-dim.active {
-  opacity: 1;
+  box-shadow: 0 0 0 100vmax rgba(10, 12, 18, 0.66);
 }
 
 .wizard-page-dim.lifting {
-  opacity: 0;
-  transition: opacity 900ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Sidebar inputs rise above the dim */
-.wizard-spotlight {
-  position: relative;
-  z-index: 9995;
+  box-shadow: 0 0 0 100vmax rgba(10, 12, 18, 0);
+  transition: box-shadow 900ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 

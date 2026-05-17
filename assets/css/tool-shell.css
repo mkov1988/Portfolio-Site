@@ -49,6 +49,83 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
+/* ── Compact tool topbar ───────────────────────────────────────────────
+   Slim, utilitarian header for tool pages: a "back to all tools" link
+   and the tool title. Replaces the oversized portfolio hero. Lives inside
+   .calculator-section so it inherits the light/dark theme — light grey in
+   light mode, dark in dark mode, instead of always-black. */
+.tool-topbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem clamp(1rem, 4vw, 2rem);
+  background: #ebedf0;
+  border-bottom: 1px solid var(--border);
+}
+
+.calculator-section[data-theme="dark"] .tool-topbar {
+  background: #1c1d20;
+}
+
+.tool-topbar-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.tool-topbar-back:hover {
+  color: var(--text);
+  border-color: var(--text-secondary);
+}
+
+.tool-topbar-back svg {
+  flex-shrink: 0;
+}
+
+.tool-topbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tool-topbar-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.tool-topbar-title h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* ── Portfolio nav strip on tool pages ─────────────────────────────────
+   Keeps the site's main navigation above the compact tool topbar. The
+   portfolio .nav-bar is normally position:absolute (it overlays a hero);
+   on tool pages there is no hero, so we make it static — it then forms
+   its own slim dark strip. Always dark, matching the rest of the site. */
+.tool-navbar-header {
+  position: relative;
+  background: var(--color-dark);
+}
+
+.tool-navbar-header .nav-bar {
+  position: static;
+}
+
 /* ── Byline footer ─────────────────────────────────────────────────────── */
 .tool-byline {
   padding: 2.5rem 0 4rem;

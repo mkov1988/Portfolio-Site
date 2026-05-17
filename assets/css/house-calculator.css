@@ -58,7 +58,7 @@
 .calculator-section {
   background-color: var(--bg);
   color: var(--text);
-  padding-top: 2rem !important; /* Overrides default .section padding to close gap with saas bar */
+  padding-top: 0 !important; /* Topbar sits flush at the very top of the section */
   --bg: #FFFFFF;
   --surface: #FFFFFF;
   --border: rgba(28, 29, 32, 0.175);

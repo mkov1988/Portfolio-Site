@@ -370,14 +370,31 @@
       if (phantomHome) pinToBody(phantomHome, homeRect);
       if (phantomCash) pinToBody(phantomCash, cashRect);
 
-      // Create the page dim overlay
+      // ── Spotlight dim ──────────────────────────────────────────────
+      // A transparent "hole" sized to the two target input groups that
+      // casts a huge box-shadow darkening everything else. Box-shadow is
+      // immune to the stacking-context traps that defeat a plain overlay
+      // (.main-wrap has will-change:transform from Locomotive, which
+      // creates a stacking context the inputs cannot z-index out of).
+      // The hole simply reveals whatever sits beneath it — the two real
+      // input groups — at full brightness.
       const pageDim = document.createElement('div');
       pageDim.className = 'wizard-page-dim';
+      const spotRects = [targetHomeGroup, targetCashGroup]
+        .filter(Boolean)
+        .map(function (g) { return g.getBoundingClientRect(); });
+      if (spotRects.length) {
+        const pad = 10;
+        const sl = Math.min.apply(null, spotRects.map(function (r) { return r.left; })) - pad;
+        const st = Math.min.apply(null, spotRects.map(function (r) { return r.top; })) - pad;
+        const sr = Math.max.apply(null, spotRects.map(function (r) { return r.right; })) + pad;
+        const sb = Math.max.apply(null, spotRects.map(function (r) { return r.bottom; })) + pad;
+        pageDim.style.left = sl + 'px';
+        pageDim.style.top = st + 'px';
+        pageDim.style.width = (sr - sl) + 'px';
+        pageDim.style.height = (sb - st) + 'px';
+      }
       document.body.appendChild(pageDim);
-
-      // Spotlight the sidebar targets — they rise above the dim
-      if (targetHomeGroup) targetHomeGroup.classList.add('wizard-spotlight');
-      if (targetCashGroup) targetCashGroup.classList.add('wizard-spotlight');
 
       // Fade the modal
       overlay.classList.add('dismissing');
@@ -406,8 +423,6 @@
           if (phantomHome) phantomHome.remove();
           if (phantomCash) phantomCash.remove();
           pageDim.remove();
-          if (targetHomeGroup) targetHomeGroup.classList.remove('wizard-spotlight');
-          if (targetCashGroup) targetCashGroup.classList.remove('wizard-spotlight');
           applyLandingGlow(targetHomeGroup);
           applyLandingGlow(targetCashGroup);
         }, 2750);
