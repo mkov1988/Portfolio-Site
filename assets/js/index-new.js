@@ -469,6 +469,11 @@ function initPageTransitions() {
       smooth: true,
     });
 
+    // Expose the Locomotive instance so page scripts (e.g. the Focus Reader)
+    // can drive programmatic scrolling. In smooth mode the page is moved via
+    // CSS transform, so window.scrollTo is a no-op — scripts must use this.
+    window.locoScroll = scroll;
+
     window.onresize = scroll.update();
 
     scroll.on("scroll", () => ScrollTrigger.update());

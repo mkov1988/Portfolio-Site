@@ -506,7 +506,6 @@
         const dropzone = root.querySelector('#fr-dropzone');
         const textarea = root.querySelector('#fr-textarea');
         const wordCount = root.querySelector('#fr-word-count');
-        const dragOverlay = root.querySelector('#fr-drag-overlay');
         const fileInput = root.querySelector('#fr-file-input');
         const startBtn = root.querySelector('#fr-start-btn');
         const samplesGrid = root.querySelector('#fr-samples-grid');
@@ -525,16 +524,13 @@
         dropzone.addEventListener('dragover', e => {
             e.preventDefault();
             dropzone.classList.add('dragging');
-            dragOverlay.hidden = false;
         });
         dropzone.addEventListener('dragleave', () => {
             dropzone.classList.remove('dragging');
-            dragOverlay.hidden = true;
         });
         dropzone.addEventListener('drop', e => {
             e.preventDefault();
             dropzone.classList.remove('dragging');
-            dragOverlay.hidden = true;
             const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
             if (file) handleFile(file);
         });
@@ -549,8 +545,12 @@
             if (ext === 'txt') {
                 const reader = new FileReader();
                 reader.onload = ev => {
+                    // Populate the textarea so the user can preview what they
+                    // just dropped and confirm via "Start Reading".
                     textarea.value = String(ev.target.result || '');
                     updateWordCount();
+                    textarea.scrollTop = 0;
+                    pulseStartButton();
                 };
                 reader.readAsText(file);
             } else if (ext === 'pdf' || ext === 'epub') {
@@ -559,18 +559,42 @@
             }
         }
 
-        // Sample chips
+        // Sample chips — populate the textarea so the user can preview the
+        // text and confirm via "Start Reading". Mirrors the drag-drop flow.
         SAMPLE_TEXTS.forEach(sample => {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'fr-sample-chip';
             btn.textContent = sample.label;
+            btn.dataset.sampleId = sample.label;
             btn.addEventListener('click', () => {
                 textarea.value = sample.text;
                 updateWordCount();
+                // Mark the loaded sample so the user knows which one is staged.
+                samplesGrid.querySelectorAll('.fr-sample-chip')
+                    .forEach(c => c.classList.toggle('is-loaded', c === btn));
+                // Reset scroll inside the textarea so the user sees the start.
+                textarea.scrollTop = 0;
+                // Draw the eye to Start Reading — same "where did my action go?"
+                // pattern as the wizard's spotlight on landed values.
+                pulseStartButton();
             });
             samplesGrid.appendChild(btn);
         });
+
+        // Clear sample selection when the user manually edits the text.
+        textarea.addEventListener('input', () => {
+            samplesGrid.querySelectorAll('.fr-sample-chip.is-loaded')
+                .forEach(c => c.classList.remove('is-loaded'));
+        });
+
+        function pulseStartButton() {
+            if (startBtn.disabled) return;
+            startBtn.classList.remove('fr-pulse');
+            // Force reflow so the animation restarts on repeated triggers.
+            void startBtn.offsetWidth;
+            startBtn.classList.add('fr-pulse');
+        }
 
         startBtn.addEventListener('click', () => {
             const text = textarea.value.trim();
@@ -745,15 +769,72 @@
             engine.setWpm(wpm);
             setView('reading');
             setVisMode(visMode);
-            // Scroll into view in case reader is below the fold
-            setTimeout(() => {
-                root.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 50);
+            // Bring the entire reading view (header + display + controls)
+            // into the viewport. The pane is sized to fit within ~100svh, so
+            // we center it with equal margin top/bottom.
+            //
+            // We use a manual rAF tween rather than scrollIntoView/scrollTo
+            // because the site's smooth-scroll layer can swallow declarative
+            // animated scrolls. Per-frame imperative scrolls always land.
+            scrollPaneIntoView(readingView || root);
         }
 
         function backToInput() {
             engine.pause();
             setView('input');
+        }
+
+        /**
+         * Smoothly scroll so the given element is centered in the viewport.
+         *
+         * The site shell runs Locomotive Scroll in smooth mode, which moves
+         * the page via CSS transform — window.scrollTo is a no-op there. So we
+         * drive Locomotive's own scrollTo when its instance is available
+         * (exposed as window.locoScroll), and fall back to a manual
+         * window.scrollTo tween only when the page scrolls natively.
+         *
+         * The settle delay lets the [data-view] toggle + layout commit before
+         * we measure, and lets Locomotive re-measure the now-shorter document.
+         */
+        function scrollPaneIntoView(pane) {
+            if (!pane) return;
+
+            setTimeout(() => {
+                const loco = window.locoScroll;
+
+                if (loco && typeof loco.scrollTo === 'function') {
+                    // Locomotive caches element offsets; the view swap changed
+                    // document height, so re-measure before targeting.
+                    if (typeof loco.update === 'function') loco.update();
+                    setTimeout(() => {
+                        const vh = window.innerHeight;
+                        const paneH = pane.getBoundingClientRect().height;
+                        // Negative offset shifts the target down from the top
+                        // edge, centering it when it is shorter than the vh.
+                        const centerOffset = -Math.max(16, (vh - paneH) / 2);
+                        loco.scrollTo(pane, { offset: centerOffset, duration: 700 });
+                    }, 60);
+                    return;
+                }
+
+                // Native-scroll fallback: manual tween (Locomotive in non-smooth
+                // mode, or instance not ready). Per-tick imperative scrolls land
+                // where declarative smooth scrolls get intercepted.
+                const rect = pane.getBoundingClientRect();
+                const vh = window.innerHeight;
+                const offset = Math.max(16, (vh - rect.height) / 2);
+                const start = window.scrollY;
+                const target = Math.max(0, start + rect.top - offset);
+                if (Math.abs(target - start) < 4) return;
+                const duration = 650;
+                const t0 = performance.now();
+                (function step() {
+                    const t = Math.min(1, (performance.now() - t0) / duration);
+                    const eased = 0.5 - Math.cos(Math.PI * t) / 2;
+                    window.scrollTo(0, start + (target - start) * eased);
+                    if (t < 1) setTimeout(step, 16);
+                })();
+            }, 32);
         }
 
         // Wire input view

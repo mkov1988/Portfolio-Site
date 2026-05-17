@@ -34,6 +34,17 @@
     padding: 0 clamp(1rem, 4vw, 2rem);
 }
 
+/* ── VIEW STATE MACHINE ─────────────────────────────────────────────
+   The root [data-view] attribute is the single source of truth.
+   Exactly one pane renders at a time; the other is fully removed
+   from layout so its controls (progress bar, WPM, etc.) cannot
+   leak onto the empty-state screen.
+   ──────────────────────────────────────────────────────────────── */
+.focus-reader[data-view="reading"] [data-view-pane="input"],
+.focus-reader[data-view="input"]   [data-view-pane="reading"] {
+    display: none !important;
+}
+
 /* ── INPUT VIEW ─────────────────────────────────────────────────────── */
 .fr-input-card {
     display: flex;
@@ -54,8 +65,8 @@
 }
 
 .fr-dropzone.dragging {
-    border: 2px dashed var(--fr-accent);
-    background: rgba(239, 68, 68, 0.06);
+    border-color: var(--fr-border-strong);
+    background: var(--fr-bg-elevated);
 }
 
 .fr-textarea {
@@ -86,27 +97,8 @@
     pointer-events: none;
 }
 
-.fr-drag-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(239, 68, 68, 0.12);
-    border-radius: 1rem;
-    pointer-events: none;
-}
-
-.fr-drag-overlay-inner {
-    text-align: center;
-    color: #fca5a5;
-}
-
-.fr-drag-icon {
-    display: block;
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
+/* Drag overlay removed — drag-active state is conveyed by the
+   subtle border highlight on .fr-dropzone.dragging instead. */
 
 .fr-filetype-hints {
     display: flex;
@@ -232,11 +224,33 @@
     color: #fca5a5;
 }
 
+/* Currently-loaded sample — shows which chip's text is staged below. */
+.fr-sample-chip.is-loaded {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #fecaca;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25) inset;
+}
+
+/* Pulse animation drawing attention to the Start Reading button once
+   content has been loaded into the textarea via a sample or file drop. */
+@keyframes fr-pulse-glow {
+    0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55), 0 6px 20px -8px var(--fr-accent-glow); }
+    60%  { box-shadow: 0 0 0 14px rgba(239, 68, 68, 0),  0 6px 20px -8px var(--fr-accent-glow); }
+    100% { box-shadow: 0 0 0 0  rgba(239, 68, 68, 0),    0 6px 20px -8px var(--fr-accent-glow); }
+}
+
+.fr-btn-primary.fr-pulse:not(:disabled) {
+    animation: fr-pulse-glow 1.4s cubic-bezier(0.4, 0, 0.2, 1) 1;
+}
+
 /* ── READING VIEW ───────────────────────────────────────────────────── */
 .fr-reading-view {
     display: flex;
     flex-direction: column;
-    min-height: 75vh;
+    min-height: calc(100svh - 4rem);
+    max-height: calc(100svh - 2rem);
+    gap: 1.25rem;
 }
 
 .fr-reading-header {
@@ -244,9 +258,10 @@
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 1rem;
-    padding: 0.5rem 0 1.5rem;
+    padding: 0.5rem 0 1rem;
     border-bottom: 1px solid var(--fr-border);
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    flex-shrink: 0;
 }
 
 .fr-icon-btn {
@@ -296,8 +311,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1.25rem;
     flex: 1;
+    min-height: 0;
 }
 
 /* ── VIS SELECTOR ───────────────────────────────────────────────────── */
@@ -342,7 +358,7 @@
 .fr-display-area {
     width: 100%;
     flex: 1;
-    min-height: 50vh;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
