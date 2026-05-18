@@ -642,8 +642,10 @@
                 </div>
             </div>
 
-            <!-- ── EMAIL CAPTURE (inline, end of journey) ── -->
-            <section class="email-capture-card" id="emailCapture" data-state="idle" aria-labelledby="emailCaptureTitle">
+            <!-- ── EMAIL CAPTURE (inline, end of journey) ──
+                 Hidden until the email-worker backend is deployed
+                 (see server/email-worker/README.md). Remove `hidden` to re-enable. -->
+            <section class="email-capture-card" id="emailCapture" data-state="idle" aria-labelledby="emailCaptureTitle" hidden>
                 <h4 id="emailCaptureTitle">Save This Scenario</h4>
                 <p class="email-sub">Get a clean breakdown of your numbers in your inbox — yours to revisit, share, or send to a partner.</p>
                 <form class="email-form" id="emailForm" novalidate>
@@ -674,8 +676,9 @@
                 </div>
             </section>
 
-            <!-- Cross-link to Investment Growth -->
-            <a class="cross-link" id="mortgage-to-invest" href="investment-calculator.html" data-barba-prevent="all">
+            <!-- Cross-link to Investment Growth — hidden until the Investment Calculator is public.
+                 Inline display:none because .cross-link sets its own display, which overrides [hidden]. -->
+            <a class="cross-link" id="mortgage-to-invest" href="investment-calculator.html" data-barba-prevent="all" hidden style="display:none">
                 <span>📈</span>
                 <span id="mortgage-to-invest-text">Want to explore how the invested difference grows? See it in the Investment Calculator</span>
                 <span class="cross-link-arrow">→</span>
@@ -700,7 +703,6 @@
             </p>
             <div class="tool-byline-cross">
                 <span class="tool-byline-cross-label">More</span>
-                <a href="investment-calculator.html" data-barba-prevent="all">Investment Calculator &rarr;</a>
                 <a href="../tools.html">All tools</a>
                 <a href="../contact.html">Contact</a>
             </div>
