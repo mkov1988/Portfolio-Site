@@ -1678,6 +1678,12 @@ function initHouseCalculator() {
                                 usePointStyle: true,
                                 padding: 16,
                                 font: { family: 'Inter', size: 13 },
+                                // Explicit color so we don't fall back to
+                                // Chart.js's default #666, which is barely
+                                // legible on the dark surface. Picked --text
+                                // (body strength) because the legend is
+                                // interactive — users click to toggle series.
+                                color: getCssVar('--text'),
                                 filter: (legendItem) => {
                                     // Hide contributions from legend click (still visible)
                                     return true;
@@ -1714,22 +1720,34 @@ function initHouseCalculator() {
                             },
                         },
                     },
-                    scales: {
-                        x: {
-                            title: { display: true, text: 'Year', font: { family: 'Inter', size: 12, weight: '500' }, color: getCssVar('--text-secondary') },
-                            grid: { color: htmlEl.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' },
-                            ticks: { color: getCssVar('--text-secondary'), font: { family: 'Inter' } },
-                        },
-                        y: {
-                            title: { display: true, text: 'Portfolio Value', font: { family: 'Inter', size: 12, weight: '500' }, color: getCssVar('--text-secondary') },
-                            grid: { color: htmlEl.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' },
-                            ticks: {
-                                color: getCssVar('--text-secondary'),
-                                font: { family: 'Inter' },
-                                callback: (v) => formatCurrencyShort(v),
+                    scales: (() => {
+                        // Chart label colors live outside the CSS token
+                        // system because --text-secondary is tuned for body
+                        // copy on neutral surfaces; on top of the chart's
+                        // dense gridlines it reads as washed out. Use a
+                        // brighter step (gray-300 dark / gray-700 light) so
+                        // axis values stay legible without competing with
+                        // the data lines themselves.
+                        const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+                        const axisColor = isDark ? '#d1d5db' : '#4b5563';
+                        const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+                        return {
+                            x: {
+                                title: { display: true, text: 'Year', font: { family: 'Inter', size: 12, weight: '500' }, color: axisColor },
+                                grid: { color: gridColor },
+                                ticks: { color: axisColor, font: { family: 'Inter' } },
                             },
-                        },
-                    },
+                            y: {
+                                title: { display: true, text: 'Portfolio Value', font: { family: 'Inter', size: 12, weight: '500' }, color: axisColor },
+                                grid: { color: gridColor },
+                                ticks: {
+                                    color: axisColor,
+                                    font: { family: 'Inter' },
+                                    callback: (v) => formatCurrencyShort(v),
+                                },
+                            },
+                        };
+                    })(),
                 },
             });
         }
@@ -2061,16 +2079,21 @@ function initHouseCalculator() {
         function updateInvestChartColors() {
             if (!investChart) return;
             const isDark = htmlEl.getAttribute('data-theme') === 'dark';
-            const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
-            const textColor = isDark ? '#9ca3af' : '#5f6672';
+            // Match the contrast values used at initInvestChart — gray-300
+            // on dark / gray-700 on light for axes, body-strength for the
+            // legend (which is interactive).
+            const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+            const axisColor = isDark ? '#d1d5db' : '#4b5563';
+            const legendColor = getCssVar('--text');
             const tooltipBg = isDark ? '#374151' : '#1a1d23';
 
             investChart.options.scales.x.grid.color = gridColor;
-            investChart.options.scales.x.ticks.color = textColor;
-            investChart.options.scales.x.title.color = textColor;
+            investChart.options.scales.x.ticks.color = axisColor;
+            investChart.options.scales.x.title.color = axisColor;
             investChart.options.scales.y.grid.color = gridColor;
-            investChart.options.scales.y.ticks.color = textColor;
-            investChart.options.scales.y.title.color = textColor;
+            investChart.options.scales.y.ticks.color = axisColor;
+            investChart.options.scales.y.title.color = axisColor;
+            investChart.options.plugins.legend.labels.color = legendColor;
             investChart.options.plugins.tooltip.backgroundColor = tooltipBg;
             investChart.update('none');
         }
