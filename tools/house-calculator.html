@@ -71,6 +71,7 @@
                                         <h2>Home<div class="dot"></div></h2>
                                         <h2>Work<div class="dot"></div></h2>
                                         <h2 class="active">House Calculator<div class="dot"></div></h2>
+                                        <h2>Investment Calculator<div class="dot"></div></h2>
                                         <h2>Cox Auto<div class="dot"></div></h2>
                                         <h2>FABRIC&trade;<div class="dot"></div></h2>
                                         <h2>Aanstekelijk<div class="dot"></div></h2>
@@ -289,10 +290,10 @@
                             Down payment</label>
                         <div class="input-row s2-input-row" style="margin: 0;">
                             <span class="unit" style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color);">$</span>
-                            <input type="text" inputmode="numeric" id="s2DownInput" value="150,000"
+                            <input type="text" inputmode="numeric" id="s2DownInput" value="37,500"
                                 style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color); border: 1px dashed var(--border); background: transparent; padding: 2px 6px;">
                         </div>
-                        <input type="hidden" id="s2Down" value="150000">
+                        <input type="hidden" id="s2Down" value="37500">
                     </div>
                     <div class="s2-split-col s2-split-col--right">
                         <label for="s2InvestInput"
@@ -300,16 +301,16 @@
                             Invest the Rest</label>
                         <div class="input-row s2-input-row" style="margin: 0; justify-content: flex-end;">
                             <span class="unit" style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color);">$</span>
-                            <input type="text" inputmode="numeric" id="s2InvestInput" value="400,000"
+                            <input type="text" inputmode="numeric" id="s2InvestInput" value="512,500"
                                 style="font-size: 1.25rem; font-weight: 800; color: var(--s2-color); border: 1px dashed var(--border); background: transparent; padding: 2px 6px; text-align: right;">
                         </div>
-                        <input type="hidden" id="s2Invest" value="400000">
+                        <input type="hidden" id="s2Invest" value="512500">
                     </div>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 4px;">
                     <span style="font-size: 1.1rem;">🏠</span>
-                    <input type="range" id="s2DownSlider" min="0" max="550000" step="1000" value="150000"
+                    <input type="range" id="s2DownSlider" min="0" max="550000" step="1000" value="37500"
                         style="flex: 1; margin: 0;">
                     <span style="font-size: 1.1rem;">📈</span>
                 </div>
@@ -676,9 +677,8 @@
                 </div>
             </section>
 
-            <!-- Cross-link to Investment Growth — hidden until the Investment Calculator is public.
-                 Inline display:none because .cross-link sets its own display, which overrides [hidden]. -->
-            <a class="cross-link" id="mortgage-to-invest" href="investment-calculator.html" data-barba-prevent="all" hidden style="display:none">
+            <!-- Cross-link to Investment Growth -->
+            <a class="cross-link" id="mortgage-to-invest" href="investment-calculator.html" data-barba-prevent="all">
                 <span>📈</span>
                 <span id="mortgage-to-invest-text">Want to explore how the invested difference grows? See it in the Investment Calculator</span>
                 <span class="cross-link-arrow">→</span>
