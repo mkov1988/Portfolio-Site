@@ -28,16 +28,51 @@ const TYPES = {
   '.map':   'application/json; charset=utf-8',
 };
 
-http.createServer((req, res) => {
-  let p = decodeURIComponent(req.url.split('?')[0]);
+// Resolve a request path to a real file on disk. Tries, in order:
+//   1. the literal path (e.g. /tools.html)
+//   2. path + ".html" if no extension (e.g. /tools → /tools.html)
+//   3. path + "/index.html" if it's a directory
+// Returns the resolved absolute file path, or null if none exists.
+// This brings the dev server closer to "every link a user might guess
+// just works" without needing to remember .html extensions, while
+// still mirroring the actual files GitHub Pages serves at the canonical
+// .html URLs that the site's own nav uses.
+function resolveFile(reqPath) {
+  let p = reqPath;
   if (p.endsWith('/')) p += 'index.html';
   const fp = path.join(ROOT, p);
-  // Block path traversal.
-  if (!fp.startsWith(ROOT)) { res.writeHead(403); return res.end('403'); }
+  if (!fp.startsWith(ROOT)) return null; // path traversal guard
+  try { if (fs.statSync(fp).isFile()) return fp; } catch (_) {}
+
+  // Extension-less guess (/tools → /tools.html)
+  if (!path.extname(p)) {
+    const html = path.join(ROOT, p + '.html');
+    if (html.startsWith(ROOT)) {
+      try { if (fs.statSync(html).isFile()) return html; } catch (_) {}
+    }
+    // Directory-style index (/tools → /tools/index.html)
+    const idx = path.join(ROOT, p, 'index.html');
+    if (idx.startsWith(ROOT)) {
+      try { if (fs.statSync(idx).isFile()) return idx; } catch (_) {}
+    }
+  }
+  return null;
+}
+
+http.createServer((req, res) => {
+  const reqPath = decodeURIComponent(req.url.split('?')[0]);
+  if (reqPath.includes('..')) {
+    res.writeHead(403); return res.end('403');
+  }
+  const fp = resolveFile(reqPath);
+  if (!fp) {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    return res.end('404 ' + reqPath);
+  }
   fs.readFile(fp, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
-      return res.end('404 ' + p);
+      return res.end('404 ' + reqPath);
     }
     const ct = TYPES[path.extname(fp).toLowerCase()] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': ct, 'Cache-Control': 'no-store' });
