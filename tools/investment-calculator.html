@@ -297,13 +297,20 @@
                     <span class="invest-banner-amount" id="invest-banner-amount">$723,441</span>
                 </div>
                 <div class="invest-banner-fund" id="invest-banner-fund">in Total US Stock Market</div>
+                <!-- Single chip row matches the layout used by both stat
+                     cards below. Order: GAIN (green) → HYSA comparison
+                     (conditional). #invest-banner-contribs is intentionally
+                     kept in the DOM but rendered empty by JS — removing the
+                     element would break the existing JS handle without
+                     adding value. -->
                 <div class="invest-banner-detail">
-                    <span id="invest-banner-gains">$563,441 in estimated gains</span>
-                    <span class="invest-banner-dot">&middot;</span>
-                    <span id="invest-banner-contribs">$160,000 contributed</span>
+                    <div id="invest-banner-gains"></div>
+                    <div id="invest-banner-comparison"></div>
+                    <div id="invest-banner-contribs" hidden></div>
                 </div>
-                <div class="invest-banner-inputs" id="invest-banner-inputs" style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:0.25rem;"></div>
-                <div class="invest-banner-comparison" id="invest-banner-comparison"></div>
+                <!-- Retained as an empty no-op for backwards compat with the
+                     existing JS reference; rendered chips above replaced it. -->
+                <div id="invest-banner-inputs" hidden></div>
             </div>
 
             <!-- Disclaimer -->
@@ -325,9 +332,11 @@
                     </div>
                 </div>
                 <div class="card invest-stat-card invest-stat-card--returns">
-                    <div class="stat-card-label" id="invest-stat-returns-label">Projected Returns — <span id="invest-stat-fund-name">Total US Stock Market</span></div>
+                    <div class="stat-card-label" id="invest-stat-returns-label">Projected Returns</div>
                     <div class="stat-card-hero invest-stat-multiple" id="invest-stat-multiple">4.5×</div>
-                    <div class="stat-card-sub">growth multiple</div>
+                    <!-- Subtitle is just the fund name — no "growth multiple
+                         in …" prose, which restated the card label. -->
+                    <div class="stat-card-sub" id="invest-stat-fund-name">Total US Stock Market</div>
                     <div class="stat-card-detail">
                         <div id="invest-stat-fv-line"></div>
                         <div id="invest-stat-gains-line"></div>

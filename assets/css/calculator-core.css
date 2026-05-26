@@ -31,13 +31,28 @@
             --s2-color: #7c3aed;
             --equity-color: #3b82f6;
             --portfolio-color: #7c3aed;
-            /* Investment Calculator Fund Colors */
-            --invest-stock: #4f46e5;
-            --invest-sp500: #2563eb;
-            --invest-intl: #0d9488;
-            --invest-bonds: #d97706;
-            --invest-target: #e11d48;
-            --invest-hysa: #64748b;
+            /* Investment Calculator Fund Colors — light theme.
+               Core (always-visible) funds intentionally land on
+               recognizable, primary-feeling hues. Extended funds use
+               slightly more saturated / less-common positions so the
+               "more" row reads as a secondary palette. */
+            --invest-stock: #4f46e5;     /* indigo */
+            --invest-sp500: #2563eb;     /* blue   */
+            --invest-intl: #0d9488;      /* teal   */
+            --invest-bonds: #d97706;     /* amber  */
+            --invest-target: #e11d48;    /* rose   */
+            --invest-hysa: #64748b;      /* slate  */
+            /* Extended */
+            --invest-nasdaq: #7c3aed;    /* violet */
+            --invest-growth: #a21caf;    /* fuchsia */
+            --invest-value: #57534e;     /* stone  */
+            --invest-mid: #059669;       /* emerald */
+            --invest-small: #0891b2;     /* cyan   */
+            --invest-smallval: #0e7490;  /* deeper cyan */
+            --invest-em: #65a30d;        /* lime   */
+            --invest-reit: #be185d;      /* pink   */
+            --invest-divapp: #c2410c;    /* burnt orange */
+            --invest-balanced: #475569;  /* deeper slate (distinct from hysa) */
             --invest-contrib: rgba(100, 116, 139, 0.5);
 
             --radius: 0.8rem;
@@ -73,13 +88,26 @@
             --shadow-md: 0 0.2667rem 0.8rem rgba(0, 0, 0, 0.7), 0 2px 0.2667rem rgba(0, 0, 0, 0.4);
             --input-bg: #111827;
             /* Dark background for input fields */
-            /* Investment Calculator Fund Colors (Dark) */
-            --invest-stock: #818cf8;
-            --invest-sp500: #60a5fa;
-            --invest-intl: #2dd4bf;
-            --invest-bonds: #fbbf24;
-            --invest-target: #fb7185;
-            --invest-hysa: #94a3b8;
+            /* Investment Calculator Fund Colors (Dark) — same hue,
+               lightened ~2 Tailwind steps so the pill chrome stays
+               readable on the dark surface. */
+            --invest-stock: #818cf8;     /* indigo-400 */
+            --invest-sp500: #60a5fa;     /* blue-400   */
+            --invest-intl: #2dd4bf;      /* teal-400   */
+            --invest-bonds: #fbbf24;     /* amber-400  */
+            --invest-target: #fb7185;    /* rose-400   */
+            --invest-hysa: #94a3b8;      /* slate-400  */
+            /* Extended */
+            --invest-nasdaq: #a78bfa;    /* violet-400 */
+            --invest-growth: #d946ef;    /* fuchsia-500 */
+            --invest-value: #a8a29e;     /* stone-400  */
+            --invest-mid: #34d399;       /* emerald-400 */
+            --invest-small: #22d3ee;     /* cyan-400   */
+            --invest-smallval: #06b6d4;  /* cyan-500   */
+            --invest-em: #84cc16;        /* lime-500   */
+            --invest-reit: #f472b6;      /* pink-400   */
+            --invest-divapp: #fb923c;    /* orange-400 */
+            --invest-balanced: #cbd5e1;  /* slate-300 (distinct from hysa) */
             --invest-contrib: rgba(148, 163, 184, 0.5);
             --s1-footer-bg: #1e293b;
             --s2-footer-bg: #2e1065;
@@ -1639,13 +1667,84 @@
             border-color: transparent;
         }
 
+        /* ── "More fund types" toggle + extended row ──────────────────
+           The toggle visually reads as a sibling of the core pills (same
+           shape, same row) but with a dashed border so it doesn't look
+           like a selectable fund. Chevron rotates on expand. A small
+           count badge surfaces when the user has selected one or more
+           extended funds while the section is collapsed, so hidden
+           selections don't go invisible.
+
+           The extended row sits as a sibling div (.invest-pills-extended)
+           that uses grid-template-rows transition for a smooth open/
+           close — display:none would have no animation. */
+        .invest-pill-more {
+            border-style: dashed;
+            color: var(--text-secondary);
+            gap: 0.4rem;
+        }
+        .invest-pill-more:hover {
+            color: var(--text);
+            border-color: var(--text-secondary);
+        }
+        .invest-pill-more .pill-more-chevron {
+            display: inline-block;
+            font-size: 0.85em;
+            line-height: 1;
+            transition: transform 0.18s ease;
+        }
+        .invest-pill-more.expanded .pill-more-chevron {
+            transform: rotate(180deg);
+        }
+        .invest-pill-more .pill-more-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.25rem;
+            height: 1.25rem;
+            padding: 0 0.4rem;
+            border-radius: 999px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Extended row sits as a full-width sibling of the core pills
+           inside the same flex parent. flex-basis:100% forces it to its
+           own line. Collapsed = max-height 0 + zero margin + faded; open
+           lifts the cap and brings it in. max-height ceiling is generous
+           — never visually reached even with all 10 pills wrapping on a
+           narrow viewport. */
+        .invest-pills-extended {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            flex-basis: 100%;
+            max-height: 0;
+            margin-top: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.24s ease, margin-top 0.24s ease, opacity 0.18s ease;
+        }
+        .invest-pills-extended.open {
+            max-height: 500px;
+            margin-top: 0.5rem;
+            opacity: 1;
+        }
+
         .invest-nominal-note {
             font-size: var(--text-sm);
             color: var(--text-secondary);
             font-style: italic;
         }
 
-        /* Banner */
+        /* ── Top "Projected Portfolio Value" banner ─────────────────
+           Same visual contract as the two stat cards below it: left
+           accent border (fund color, set inline by JS), white hero,
+           neutral subtitle, single horizontal chip row at the bottom.
+        */
         .invest-banner {
             border-left: 4px solid var(--invest-stock);
             padding: 1.5rem 2rem;
@@ -1672,29 +1771,21 @@
             font-size: var(--text-2xl);
             font-weight: 800;
             letter-spacing: -1px;
+            color: var(--text); /* locked white — matches the stat-card heroes */
         }
 
         .invest-banner-fund {
             font-size: var(--text-base);
             font-weight: 500;
-            margin-bottom: 0.5rem;
+            color: var(--text-secondary); /* neutral — no longer fund-tinted */
+            margin-bottom: 0.75rem;
         }
 
+        /* Chip row — one rule shared by both the banner and stat cards. */
         .invest-banner-detail {
-            font-size: var(--text-sm);
-            color: var(--text-secondary);
             display: flex;
-            gap: 0.5rem;
             flex-wrap: wrap;
-        }
-
-        .invest-banner-dot {
-            color: var(--border);
-        }
-
-        .invest-banner-comparison {
-            font-size: var(--text-sm);
-            color: var(--text-secondary);
+            gap: 0.5rem;
             margin-top: 0.5rem;
         }
 
@@ -1712,7 +1803,18 @@
             flex-shrink: 0;
         }
 
-        /* Stat Cards */
+        /* ── Stat Cards ─────────────────────────────────────────────
+           Visual rules shared with .invest-banner so all three result
+           cards (top hero + bottom-L + bottom-R) read as one family:
+             • Border-left accent on every card (color set by JS for
+               the two fund-aware cards; static neutral here for the
+               "what you put in" card).
+             • Hero number stays neutral (--text); JS no longer paints
+               the multiple in the fund color.
+             • Subtitle stays neutral (--text-secondary).
+             • Footer chip row (.stat-card-detail) uses .stat-line-item
+               chips with consistent spacing.
+        */
         .invest-stat-cards {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1721,6 +1823,31 @@
 
         .invest-stat-card {
             padding: 1.25rem 1.5rem;
+            border-left: 4px solid var(--invest-hysa); /* neutral on both */
+        }
+        /* Fund-color border lives only on the top banner now — the two
+           stat cards stay neutral so the eye locks onto the banner as the
+           single "this card is the fund-aware answer" anchor. */
+
+        /* Subgrid alignment (desktop only).
+           Both cards span the same 4 rows of the parent grid — label /
+           hero / subtitle / chip-row — so each row sizes to max(left,
+           right) and the corresponding children in both cards sit on the
+           same y. Without this, "$160,000" and "5.1×" had different
+           intrinsic heights and pushed everything below them out of sync.
+           Mobile (≤767px) stacks the cards in one column, where cross-
+           card alignment doesn't apply, so this block doesn't fire there. */
+        @media (min-width: 768px) {
+            .invest-stat-cards {
+                grid-template-rows: auto auto auto 1fr;
+            }
+            .invest-stat-card {
+                display: grid;
+                grid-template-rows: subgrid;
+                grid-row: 1 / span 4;
+                row-gap: 0; /* the children's existing margin-bottoms
+                               supply the visual rhythm */
+            }
         }
 
         .stat-card-label {
@@ -1737,23 +1864,28 @@
             font-weight: 700;
             letter-spacing: -0.5px;
             margin-bottom: 0.15rem;
+            color: var(--text); /* lock white; no per-card override */
         }
 
         .stat-card-sub {
             font-size: var(--text-sm);
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            color: var(--text-secondary); /* never tinted */
+            margin-bottom: 0.75rem;
         }
 
         .stat-card-detail {
-            font-size: var(--text-sm);
-            color: var(--text-secondary);
-            line-height: 1.6;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
         .invest-stat-multiple {
-            font-size: var(--text-2xl);
             font-weight: 800;
+            /* font-size + color inherit from .stat-card-hero so the
+               multiple (5.1×) and the dollar hero ($160,000) match in
+               size — which keeps the label→hero gap visually identical
+               between the two bottom cards under subgrid. */
         }
 
         /* Chart Card */
@@ -2008,4 +2140,50 @@
                 height: 300px;
                 min-height: 250px;
             }
+        }
+
+
+        /* ── Stat-line chip ─────────────────────────────────────────
+           One chip component shared by the banner and both stat cards.
+           Variants:
+             • base    — neutral border, gray descriptor, white bold value
+             • success — green border + tint, used ONLY for gain chips
+           Icons are inline 16px SVG with currentColor stroke so a chip
+           color change repaints the icon for free. No emojis (cross-
+           platform glyph drift + uneven visual weight).
+        */
+        .stat-line-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: transparent;
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin: 0;
+            width: fit-content;
+        }
+        .stat-line-item strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .stat-line-item svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2;
+            flex-shrink: 0;
+            opacity: 0.75;
+        }
+        .stat-line-item--success {
+            border-color: var(--green-border);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--green);
+        }
+        .stat-line-item--success strong {
+            color: var(--green);
+        }
+        .stat-line-item--success svg {
+            opacity: 1; /* full saturation on the green variant */
         }

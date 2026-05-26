@@ -849,7 +849,24 @@ function initHouseCalculator() {
         // INVESTMENT GROWTH CALCULATOR
         // ═══════════════════════════════════════════════
 
+        /**
+         * FUND_CONFIG — all fund types the calculator can model.
+         *
+         * tier:
+         *   • 'core' (default) — always visible in the picker
+         *   • 'extended'       — hidden behind the "More fund types"
+         *                        toggle so the default UI stays scannable
+         *
+         * grossReturn values are long-term historical averages from
+         * Vanguard / NAREIT / MSCI / Fama-French data, rounded to one
+         * decimal. expenseRatio comes from each fund's prospectus (the
+         * net rate the model uses is grossReturn - expenseRatio, computed
+         * in getNetReturn()). Recent decades vs full-history figures can
+         * differ by 1-3 percentage points; values here lean toward the
+         * conservative end so projections don't oversell.
+         */
         const FUND_CONFIG = {
+            // ── Core (always visible) ────────────────────────────────
             stock: {
                 id: 'stock',
                 label: 'Total US Stock Market',
@@ -857,6 +874,7 @@ function initHouseCalculator() {
                 grossReturn: 0.102,
                 expenseRatio: 0.0003,
                 color: '--invest-stock',
+                tier: 'core',
                 defaultOn: true,
             },
             sp500: {
@@ -866,6 +884,7 @@ function initHouseCalculator() {
                 grossReturn: 0.100,
                 expenseRatio: 0.0003,
                 color: '--invest-sp500',
+                tier: 'core',
                 defaultOn: false,
             },
             intl: {
@@ -875,6 +894,7 @@ function initHouseCalculator() {
                 grossReturn: 0.058,
                 expenseRatio: 0.0006,
                 color: '--invest-intl',
+                tier: 'core',
                 defaultOn: false,
             },
             bonds: {
@@ -884,6 +904,7 @@ function initHouseCalculator() {
                 grossReturn: 0.045,
                 expenseRatio: 0.0003,
                 color: '--invest-bonds',
+                tier: 'core',
                 defaultOn: true,
             },
             target: {
@@ -893,6 +914,7 @@ function initHouseCalculator() {
                 grossReturn: 0.082,
                 expenseRatio: 0.0012,
                 color: '--invest-target',
+                tier: 'core',
                 defaultOn: false,
             },
             hysa: {
@@ -902,9 +924,117 @@ function initHouseCalculator() {
                 grossReturn: 0.045,
                 expenseRatio: null,
                 color: '--invest-hysa',
+                tier: 'core',
                 defaultOn: true,
             },
+
+            // ── Extended (revealed by the "More fund types" toggle) ──
+            nasdaq: {
+                id: 'nasdaq',
+                label: 'Nasdaq 100',
+                ticker: 'e.g. QQQM / QQQ',
+                grossReturn: 0.125,
+                expenseRatio: 0.0015,
+                color: '--invest-nasdaq',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            growth: {
+                id: 'growth',
+                label: 'Growth Index',
+                ticker: 'e.g. VIGAX / VUG',
+                grossReturn: 0.115,
+                expenseRatio: 0.0005,
+                color: '--invest-growth',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            value: {
+                id: 'value',
+                label: 'Value Index',
+                ticker: 'e.g. VVIAX / VTV',
+                grossReturn: 0.095,
+                expenseRatio: 0.0005,
+                color: '--invest-value',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            mid: {
+                id: 'mid',
+                label: 'Mid-Cap Index',
+                ticker: 'e.g. VIMAX / VO',
+                grossReturn: 0.105,
+                expenseRatio: 0.0005,
+                color: '--invest-mid',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            small: {
+                id: 'small',
+                label: 'Small-Cap Index',
+                ticker: 'e.g. VSMAX / VB',
+                grossReturn: 0.105,
+                expenseRatio: 0.0005,
+                color: '--invest-small',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            smallVal: {
+                id: 'smallVal',
+                label: 'Small-Cap Value',
+                ticker: 'e.g. VSIAX / AVUV',
+                grossReturn: 0.115,
+                expenseRatio: 0.0007,
+                color: '--invest-smallval',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            em: {
+                id: 'em',
+                label: 'Emerging Markets',
+                ticker: 'e.g. VWO / VEMAX',
+                grossReturn: 0.075,
+                expenseRatio: 0.0008,
+                color: '--invest-em',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            reit: {
+                id: 'reit',
+                label: 'REITs',
+                ticker: 'e.g. VGSLX / VNQ',
+                grossReturn: 0.095,
+                expenseRatio: 0.0013,
+                color: '--invest-reit',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            divApp: {
+                id: 'divApp',
+                label: 'Dividend Appreciation',
+                ticker: 'e.g. VDADX / VIG',
+                grossReturn: 0.100,
+                expenseRatio: 0.0008,
+                color: '--invest-divapp',
+                tier: 'extended',
+                defaultOn: false,
+            },
+            balanced: {
+                id: 'balanced',
+                label: 'Balanced 60/40',
+                ticker: 'e.g. VBIAX',
+                grossReturn: 0.085,
+                expenseRatio: 0.0007,
+                color: '--invest-balanced',
+                tier: 'extended',
+                defaultOn: false,
+            },
         };
+
+        // Whether the "More fund types" section is expanded in the picker.
+        // Lives at module scope so a fund toggle doesn't collapse it on
+        // re-render. Reset only by explicit user click on the toggle.
+        let investMoreFundsExpanded = false;
 
         // Investment calculator state
         let investSelectedFunds = Object.keys(FUND_CONFIG).filter(id => FUND_CONFIG[id].defaultOn);
@@ -937,6 +1067,56 @@ function initHouseCalculator() {
             if (value >= 1_000_000) return '$' + (value / 1_000_000).toFixed(1) + 'M';
             if (value >= 1_000) return '$' + Math.round(value / 1_000) + 'K';
             return '$' + Math.round(value);
+        }
+
+        /**
+         * Inline-SVG icon helper for .stat-line-item chips.
+         *
+         * Lucide-style stroke icons, no fill. Sized + colored by the parent
+         * via .stat-line-item svg { width:14px; stroke: currentColor }, so
+         * a single chip variant swap (e.g. .--success) recolors the icon
+         * for free. Chose this over emoji (✨🏦🎯) because emojis render
+         * with totally different glyphs and visual weights across Apple /
+         * Windows / Android / older Outlook — the same product looked
+         * different on every machine and the icon sizes didn't match each
+         * other inside a single chip row.
+         */
+        function icon(name) {
+            const paths = {
+                // Gain / growth — used on green "--success" chips
+                trendingUp:
+                    '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>' +
+                    '<polyline points="16 7 22 7 22 13"/>',
+                // HYSA / bank comparison
+                landmark:
+                    '<line x1="3" y1="22" x2="21" y2="22"/>' +
+                    '<line x1="6" y1="18" x2="6" y2="11"/>' +
+                    '<line x1="10" y1="18" x2="10" y2="11"/>' +
+                    '<line x1="14" y1="18" x2="14" y2="11"/>' +
+                    '<line x1="18" y1="18" x2="18" y2="11"/>' +
+                    '<polygon points="12 2 20 7 4 7"/>',
+                // One-time / initial principal
+                wallet:
+                    '<path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>' +
+                    '<path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>' +
+                    '<path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
+                // Recurring / monthly
+                refresh:
+                    '<polyline points="23 4 23 10 17 10"/>' +
+                    '<polyline points="1 20 1 14 7 14"/>' +
+                    '<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+                // Time horizon
+                clock:
+                    '<circle cx="12" cy="12" r="10"/>' +
+                    '<polyline points="12 6 12 12 16 14"/>',
+            };
+            const body = paths[name] || '';
+            return (
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+                'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                body +
+                '</svg>'
+            );
         }
 
         function debounce(fn, ms) {
@@ -1054,13 +1234,34 @@ function initHouseCalculator() {
         }
 
         // ── Fund Pills ──
+        /**
+         * renderFundPills — split-tier picker.
+         *
+         * Layout:
+         *   [core pill] [core pill] … [core pill]
+         *   [+ More fund types (N selected)]
+         *      ↳ when expanded:
+         *      [ext pill] [ext pill] … [ext pill]
+         *
+         * Why split tiers: the core 6 cover ~95% of what someone modeling
+         * retirement actually picks (broad US, S&P, intl, bonds, target,
+         * HYSA). Surfacing all 16 by default makes the picker feel
+         * overwhelming and hides the recommendation that one of the
+         * core funds is probably enough for a baseline projection.
+         *
+         * Selection state for extended funds survives collapsing the
+         * section — they stay in investSelectedFunds and continue feeding
+         * the chart + projections regardless of toggle state. The toggle
+         * shows a count badge so users don't forget about hidden
+         * selections.
+         */
         function renderFundPills(selectedFunds) {
             const container = document.getElementById('invest-pills');
             container.innerHTML = '';
-            for (const [id, fund] of Object.entries(FUND_CONFIG)) {
+
+            const buildPill = (id, fund) => {
                 const isActive = selectedFunds.includes(id);
                 const color = getCssVar(fund.color);
-
                 const btn = document.createElement('button');
                 btn.className = 'invest-pill' + (isActive ? ' active' : '');
                 btn.dataset.fundId = id;
@@ -1068,17 +1269,65 @@ function initHouseCalculator() {
                     btn.style.backgroundColor = color;
                     btn.style.borderColor = color;
                 }
-
                 const dot = document.createElement('span');
                 dot.className = 'pill-dot';
-                dot.style.backgroundColor = color;
-                if (isActive) dot.style.backgroundColor = 'rgba(255,255,255,0.8)';
-
+                dot.style.backgroundColor = isActive ? 'rgba(255,255,255,0.8)' : color;
                 btn.appendChild(dot);
                 btn.appendChild(document.createTextNode(fund.label));
                 btn.addEventListener('click', () => toggleFund(id));
-                container.appendChild(btn);
+                return btn;
+            };
+
+            const entries = Object.entries(FUND_CONFIG);
+            const coreEntries = entries.filter(([, f]) => f.tier !== 'extended');
+            const extEntries  = entries.filter(([, f]) => f.tier === 'extended');
+
+            // ── Core pills ──
+            for (const [id, fund] of coreEntries) {
+                container.appendChild(buildPill(id, fund));
             }
+
+            // ── "More" toggle ──
+            const extSelectedCount = extEntries.filter(([id]) => selectedFunds.includes(id)).length;
+            const toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'invest-pill invest-pill-more'
+                + (investMoreFundsExpanded ? ' expanded' : '')
+                + (extSelectedCount > 0 ? ' has-selections' : '');
+            toggle.setAttribute('aria-expanded', investMoreFundsExpanded ? 'true' : 'false');
+            toggle.setAttribute('aria-controls', 'invest-pills-extended');
+
+            const chev = document.createElement('span');
+            chev.className = 'pill-more-chevron';
+            chev.setAttribute('aria-hidden', 'true');
+            chev.textContent = '▾';
+
+            const label = document.createElement('span');
+            label.textContent = 'More fund types';
+
+            toggle.appendChild(chev);
+            toggle.appendChild(label);
+            if (extSelectedCount > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'pill-more-badge';
+                badge.textContent = String(extSelectedCount);
+                badge.setAttribute('aria-label', `${extSelectedCount} extended fund${extSelectedCount === 1 ? '' : 's'} selected`);
+                toggle.appendChild(badge);
+            }
+            toggle.addEventListener('click', () => {
+                investMoreFundsExpanded = !investMoreFundsExpanded;
+                renderFundPills(investSelectedFunds);
+            });
+            container.appendChild(toggle);
+
+            // ── Extended pills row (always in DOM; visibility via class) ──
+            const extWrap = document.createElement('div');
+            extWrap.id = 'invest-pills-extended';
+            extWrap.className = 'invest-pills-extended' + (investMoreFundsExpanded ? ' open' : '');
+            for (const [id, fund] of extEntries) {
+                extWrap.appendChild(buildPill(id, fund));
+            }
+            container.appendChild(extWrap);
         }
 
         function toggleFund(fundId) {
@@ -1291,27 +1540,41 @@ function initHouseCalculator() {
             bannerEl.style.borderLeftColor = color;
 
             yearsEl.textContent = years;
+            // Fund label stays neutral (--text-secondary set in CSS) — no
+            // longer tinted with the fund color, because the same string
+            // appears in the bottom-right card's subtitle and we want them
+            // to match. The border-left is what carries fund identity now.
             fundEl.textContent = `in ${fund.label}`;
-            fundEl.style.color = color;
-            gainsEl.textContent = `${formatCurrency(totalGains)} in estimated gains`;
-            contribsEl.textContent = `${formatCurrency(totalContributions)} contributed`;
+
+            // Top-card chip 1: GAIN (green = "the gain you made", consistently)
+            gainsEl.className = 'stat-line-item stat-line-item--success';
+            gainsEl.innerHTML = `${icon('trendingUp')}<strong>${formatCurrency(totalGains)}</strong> gain`;
+
+            // contribsEl is no longer rendered — total contributed is the
+            // hero of the bottom-left card. Showing it again here was the
+            // single biggest source of redundancy across the three cards.
+            contribsEl.className = '';
+            contribsEl.innerHTML = '';
 
             // Animate banner amount
             animateValue(amountEl, lastBannerAmount, leadingFinalValue, 400, formatCurrency);
             lastBannerAmount = leadingFinalValue;
 
-            // Input summary line
+            // Prose "Based on $X initial + $Y/mo over N years" is also gone
+            // — the bottom-left card's two chips show the same composition
+            // in a more scannable form.
             const inputsEl = document.getElementById('invest-banner-inputs');
-            if (inputsEl) {
-                inputsEl.textContent = `Based on ${formatCurrency(inputs.initialInvestment)} initial + ${formatCurrency(inputs.monthlyContrib)}/mo over ${years} years`;
-            }
+            if (inputsEl) inputsEl.textContent = '';
 
-            // HYSA comparison
+            // Top-card chip 2: HYSA comparison (neutral, conditional).
+            // Grammar matches the gain chip: <bold value> <descriptor>.
             if (selectedFunds.includes('hysa') && leadingFundId !== 'hysa' && result.projections.hysa) {
                 const hysaFinal = result.projections.hysa[years];
-                comparisonEl.textContent = `vs. ${formatCurrency(hysaFinal)} projected in High-Yield Savings`;
+                comparisonEl.className = 'stat-line-item';
+                comparisonEl.innerHTML = `${icon('landmark')}<strong>${formatCurrency(hysaFinal)}</strong> in HYSA`;
             } else {
-                comparisonEl.textContent = '';
+                comparisonEl.className = '';
+                comparisonEl.innerHTML = '';
             }
         }
 
@@ -1328,38 +1591,70 @@ function initHouseCalculator() {
             const fvLineEl = document.getElementById('invest-stat-fv-line');
             const gainsLineEl = document.getElementById('invest-stat-gains-line');
 
-            // Contributions card
+            // ── Bottom-left: "What You Put In" ──
+            // Hero is total contributed (animated). Two neutral chips break
+            // it down into one-time + recurring inputs.
             animateValue(contribsEl, lastStatContribs, totalContributions, 300, formatCurrency);
             lastStatContribs = totalContributions;
 
-            initialLineEl.textContent = `${formatCurrency(initialInvestment)} initial`;
+            initialLineEl.className = 'stat-line-item';
+            initialLineEl.innerHTML = `${icon('wallet')}<strong>${formatCurrency(initialInvestment)}</strong> initial`;
+
+            monthlyLineEl.className = 'stat-line-item';
             if (annualContribIncrease > 0) {
-                monthlyLineEl.textContent = `escalating from ${formatCurrency(monthlyContrib)}/mo (+${(annualContribIncrease * 100).toFixed(0)}%/yr)`;
+                monthlyLineEl.innerHTML = `${icon('refresh')}<strong>${formatCurrency(monthlyContrib)}/mo</strong> +${(annualContribIncrease * 100).toFixed(0)}%/yr`;
             } else {
-                monthlyLineEl.textContent = `+ ${formatCurrency(monthlyContrib)}/mo × ${years} years`;
+                monthlyLineEl.innerHTML = `${icon('refresh')}<strong>${formatCurrency(monthlyContrib)}/mo</strong> × ${years} years`;
             }
 
-            // Returns card
+            // ── Bottom-right: "Projected Returns" ──
+            // Hero is the growth multiple (e.g. 5.1×). The two chips
+            // contextualize what that multiple means in dollars + time —
+            // distinct framing from the top card, which speaks in $.
             if (selectedFunds.length === 0) {
                 multipleEl.textContent = '—';
                 fundNameEl.textContent = '';
-                fvLineEl.textContent = '';
-                gainsLineEl.textContent = '';
-                multipleEl.style.color = '';
+                fvLineEl.className = '';
+                fvLineEl.innerHTML = '';
+                gainsLineEl.className = '';
+                gainsLineEl.innerHTML = '';
                 return;
             }
 
             const fund = FUND_CONFIG[leadingFundId];
-            const color = getCssVar(fund.color);
             fundNameEl.textContent = fund.label;
-            multipleEl.style.color = color;
+
+            // Returns card keeps the neutral CSS border — fund identity is
+            // already carried by the top banner's border. Hero color stays
+            // white per CSS (no JS override), so 5.1× no longer reads
+            // heavier than the dollar heroes on the other two cards.
 
             const multipleVal = growthMultiple;
             animateValue(multipleEl, lastStatMultiple, multipleVal, 300, (v) => v.toFixed(1) + '×');
             lastStatMultiple = multipleVal;
 
-            fvLineEl.textContent = `${formatCurrency(leadingFinalValue)} projected value`;
-            gainsLineEl.textContent = `${formatCurrency(totalGains)} estimated gains`;
+            // Chip 1: annualized return (the rate the projection actually
+            // uses — fund's gross return minus expense ratio, with any
+            // user override honored). Replaces the old "$648,707 growth"
+            // chip which duplicated the top banner's gain number.
+            //
+            // Why the model rate, not a derived CAGR: with monthly DCA
+            // contributions there's no single "principal" that compounded
+            // for `years` years, so (multiplier ^ 1/years) − 1 would be
+            // misleading. Showing the actual annual rate is honest and
+            // matches what's labelled "Net Return" on the fund pill.
+            //
+            // Stays neutral — green is reserved for "gain on top of
+            // principal in dollars" on the top card.
+            const annualRatePct = (getNetReturn(fund, investCustomRates) * 100).toFixed(1);
+            fvLineEl.className = 'stat-line-item';
+            fvLineEl.innerHTML = `${icon('trendingUp')}<strong>${annualRatePct}%</strong> / year`;
+
+            // Chip 2: time horizon (neutral). Together with the rate chip,
+            // the two read as one sentence: "5.1× ≈ 10.2% / year over 25
+            // years."
+            gainsLineEl.className = 'stat-line-item';
+            gainsLineEl.innerHTML = `${icon('clock')}over <strong>${years} years</strong>`;
         }
 
         // ── Chart ──
