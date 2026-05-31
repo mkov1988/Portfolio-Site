@@ -147,11 +147,11 @@
     position: relative;
     top: auto;
   }
-}
-main.touch .calculator-section .inputs-panel,
-main.touch .invest-inputs-panel {
-  position: sticky;
-  top: 1rem;
+  main.touch .calculator-section .inputs-panel,
+  main.touch .invest-inputs-panel {
+    position: sticky;
+    top: 1rem;
+  }
 }
 
 .calculator-section .app-container {

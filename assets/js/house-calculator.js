@@ -1225,8 +1225,8 @@ function initHouseCalculator() {
         // ── Read Inputs ──
         function readInvestInputs() {
             return {
-                initialInvestment: parseFloat(document.getElementById('invest-initial-num').value) || 0,
-                monthlyContrib: parseFloat(document.getElementById('invest-monthly-num').value) || 0,
+                initialInvestment: parseFloat(document.getElementById('invest-initial-num').value.replace(/,/g, '')) || 0,
+                monthlyContrib: parseFloat(document.getElementById('invest-monthly-num').value.replace(/,/g, '')) || 0,
                 years: parseInt(document.getElementById('invest-years-num').value) || 25,
                 annualContribIncrease: investAnnualContribIncrease,
                 selectedFunds: investSelectedFunds,
@@ -1889,6 +1889,13 @@ function initHouseCalculator() {
 
         // ── Wire Investment Inputs ──
         function wireInvestInputs() {
+            ['invest-initial-num', 'invest-monthly-num'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value) {
+                    el.value = parseInt(el.value.replace(/\D/g, ''), 10).toLocaleString('en-US');
+                }
+            });
+
             const investPairs = [
                 ['invest-initial-num', 'invest-initial'],
                 ['invest-monthly-num', 'invest-monthly'],
@@ -1898,19 +1905,51 @@ function initHouseCalculator() {
             investPairs.forEach(([numId, sliderId]) => {
                 const numEl = document.getElementById(numId);
                 const sliderEl = document.getElementById(sliderId);
-                numEl.addEventListener('input', () => {
-                    sliderEl.value = numEl.value;
+                numEl.addEventListener('input', (e) => {
+                    if (numId === 'invest-initial-num' || numId === 'invest-monthly-num') {
+                        const originalPos = e.target.selectionStart;
+                        const originalLen = e.target.value.length;
+                        let raw = e.target.value.replace(/,/g, '');
+                        if (raw === '') {
+                            sliderEl.value = 0;
+                        } else {
+                            raw = raw.replace(/\D/g, '');
+                            if (raw) {
+                                const parsed = parseFloat(raw) || 0;
+                                const formatted = parseInt(raw, 10).toLocaleString('en-US');
+                                e.target.value = formatted;
+                                sliderEl.value = parsed;
+                                const newLen = e.target.value.length;
+                                const diff = newLen - originalLen;
+                                const newPos = Math.max(0, originalPos + diff);
+                                e.target.setSelectionRange(newPos, newPos);
+                            } else {
+                                e.target.value = '';
+                                sliderEl.value = 0;
+                            }
+                        }
+                    } else {
+                        sliderEl.value = numEl.value;
+                    }
                     debouncedInvestUpdate();
                 });
                 numEl.addEventListener('change', () => {
                     updateInvestment();
                 });
                 sliderEl.addEventListener('input', () => {
-                    numEl.value = sliderEl.value;
+                    if (numId === 'invest-initial-num' || numId === 'invest-monthly-num') {
+                        numEl.value = parseFloat(sliderEl.value).toLocaleString('en-US');
+                    } else {
+                        numEl.value = sliderEl.value;
+                    }
                     debouncedInvestUpdate();
                 });
                 sliderEl.addEventListener('change', () => {
-                    numEl.value = sliderEl.value;
+                    if (numId === 'invest-initial-num' || numId === 'invest-monthly-num') {
+                        numEl.value = parseFloat(sliderEl.value).toLocaleString('en-US');
+                    } else {
+                        numEl.value = sliderEl.value;
+                    }
                     updateInvestment();
                 });
             });

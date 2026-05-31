@@ -1198,17 +1198,7 @@
             }
         }
 
-        @media (max-width: 1024px) {
-            .app-container,
-            .invest-grid {
-                grid-template-columns: 1fr;
-            }
 
-            .invest-inputs-panel {
-                position: static;
-                max-height: none;
-            }
-        }
 
         /* ═══════════════════════════════════════════════
        TOOLTIPS
@@ -2186,4 +2176,40 @@
         }
         .stat-line-item--success svg {
             opacity: 1; /* full saturation on the green variant */
+        }
+
+        /* ── Core Layout Overrides (Mobile) ── */
+        @media (max-width: 1024px) {
+            .app-container,
+            .invest-grid {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .output-panel,
+            .invest-output-panel {
+                display: contents !important;
+            }
+
+            /* House Calculator Reordering */
+            .results-container {
+                order: -1;
+            }
+
+            /* Investment Calculator Reordering */
+            .invest-banner {
+                order: -3;
+            }
+            .invest-stat-cards {
+                order: -2;
+            }
+            .invest-disclaimer {
+                order: -1;
+            }
+
+            .inputs-panel,
+            .invest-inputs-panel {
+                position: static !important;
+                max-height: none !important;
+            }
         }
