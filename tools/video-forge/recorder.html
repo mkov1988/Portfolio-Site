@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>LPL tour forge</title>
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.1/build/mp4-muxer.min.js"></script>
+<style>body{margin:0;background:#111;color:#9fe8dd;font:14px monospace}#log{padding:10px;white-space:pre-line}canvas{width:640px;display:block;margin:10px}</style>
+</head>
+<body>
+<div id="log">booting…</div>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+const log = m => document.getElementById('log').textContent = m;
+const W = 1920, H = 1080, FPS = 30, TEAL = '#005E59';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+
+const SHOTS = [
+  { src: '/assets/img/work/lpl/lpl-home.png',        from: 0.00, to: 0.42, dur: 6.5 },
+  { src: '/assets/img/work/lpl/lpl-plan.png',        from: 0.00, to: 0.38, dur: 6.5 },
+  { src: '/assets/img/work/lpl/lpl-submissions.png', from: 0.00, to: 0.30, dur: 5.0 },
+];
+const XFADE = 1.0;
+const ease = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+
+function drawShot(shot, img, p) {
+  const scale = W / img.width;
+  const viewH = H / scale;
+  const maxTop = Math.max(0, img.height - viewH);
+  const top = (shot.from + (shot.to - shot.from) * ease(p)) * maxTop;
+  ctx.drawImage(img, 0, top, img.width, viewH, 0, 0, W, H);
+}
+
+function drawFrame(t, total, imgs) {
+  let acc = 0, idx = 0;
+  for (let i = 0; i < SHOTS.length; i++) { if (t < acc + SHOTS[i].dur) { idx = i; break; } acc += SHOTS[i].dur; }
+  const local = t - acc, s = SHOTS[idx];
+  ctx.fillStyle = TEAL; ctx.fillRect(0, 0, W, H);
+  drawShot(s, imgs[idx], Math.min(1, local / s.dur));
+  const rem = s.dur - local;
+  if (rem < XFADE && idx < SHOTS.length - 1) {
+    ctx.globalAlpha = 1 - rem / XFADE;
+    drawShot(SHOTS[idx + 1], imgs[idx + 1], 0);
+    ctx.globalAlpha = 1;
+  }
+  if (t < 0.6) { ctx.fillStyle = TEAL; ctx.globalAlpha = 1 - t / 0.6; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
+  const gRem = total - t;
+  if (gRem < 0.6) { ctx.fillStyle = TEAL; ctx.globalAlpha = 1 - gRem / 0.6; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
+}
+
+(async () => {
+  try {
+    log('loading screens…');
+    const imgs = await Promise.all(SHOTS.map(s => new Promise((ok, bad) => {
+      const i = new Image(); i.onload = () => ok(i); i.onerror = () => bad(new Error('img ' + s.src)); i.src = s.src;
+    })));
+
+    const total = SHOTS.reduce((a, s) => a + s.dur, 0);
+    const nFrames = Math.round(total * FPS);
+
+    const muxer = new Mp4Muxer.Muxer({
+      target: new Mp4Muxer.ArrayBufferTarget(),
+      video: { codec: 'avc', width: W, height: H },
+      fastStart: 'in-memory',
+    });
+    const encoder = new VideoEncoder({
+      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      error: e => { throw e; },
+    });
+    const cfg = { codec: 'avc1.640028', width: W, height: H, bitrate: 5_000_000, framerate: FPS };
+    const support = await VideoEncoder.isConfigSupported(cfg);
+    if (!support.supported) { cfg.codec = 'avc1.420028'; }
+    encoder.configure(cfg);
+
+    for (let f = 0; f < nFrames; f++) {
+      drawFrame(f / FPS, total, imgs);
+      const frame = new VideoFrame(cv, { timestamp: Math.round(f * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
+      encoder.encode(frame, { keyFrame: f % 90 === 0 });
+      frame.close();
+      if (f % 30 === 0) log(`encoding frame ${f}/${nFrames}`);
+      // timer-free backpressure: flush() is promise-based and immune to background-tab throttling
+      if (encoder.encodeQueueSize > 16) await encoder.flush();
+    }
+    await encoder.flush();
+    muxer.finalize();
+
+    const buf = muxer.target.buffer;
+    log(`uploading ${(buf.byteLength / 1048576).toFixed(1)} MB…`);
+    const r = await fetch('/save', { method: 'POST', body: buf });
+    log(r.ok ? `DONE — saved ${(buf.byteLength / 1048576).toFixed(1)} MB mp4` : 'UPLOAD FAILED ' + r.status);
+    document.title = r.ok ? 'FORGE-DONE' : 'FORGE-FAIL';
+  } catch (e) { log('ERROR ' + e.message); document.title = 'FORGE-FAIL'; }
+})();
+</script>
+</body>
+</html>
